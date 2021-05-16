@@ -9,6 +9,14 @@ body{
     margin-left: 0.3%;
 }
 
-.container{
+#container{
     font-family: monospace;
+}
+
+#interior tr td:first-child{
+    width: 10%;
+}
+
+#interior tr td:last-child{
+    width: 90%;
 }
