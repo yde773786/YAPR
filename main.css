@@ -1,0 +1,14 @@
+html{
+    height: 100%;
+    width: 100%;
+    background: black;
+}
+
+body{
+    margin: 3%;
+    margin-left: 0.3%;
+}
+
+.container{
+    font-family: monospace;
+}
