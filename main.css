@@ -13,10 +13,6 @@ body{
     font-family: monospace;
 }
 
-#interior tr td:first-child{
-    width: 10%;
-}
-
-#interior tr td:last-child{
-    width: 90%;
+#interior {
+    width: 100%;
 }
