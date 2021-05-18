@@ -1,6 +1,5 @@
 const {ipcRenderer} = require('electron')
 
-var input;
 var counter = 0;
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -9,14 +8,17 @@ window.addEventListener('DOMContentLoaded', () => {
     info.innerHTML = 'No Interpreter Selected';
     info.style.color = "white";
     info.style.fontFamily = "monospace";
-
-    ipcRenderer.on('interpreter', (event, data) =>{
-        if(data.toString().toLowerCase().includes("python")){
-            info.innerHTML = data.toString();
-        }
-    });
-
 })
+
+ipcRenderer.on('interpreter', (event, data) =>{
+    var info = document.getElementById('interpreter-info');
+    if(data.toString().toLowerCase().includes("python")){
+        info.innerHTML = data.toString();
+    }
+    else{
+        info.innerHTML = "No Valid Interpreter Selected";
+    }
+});
 
 function newSlot(continuation=false) {
     let firstElement = '&gt;&gt;&gt;'
