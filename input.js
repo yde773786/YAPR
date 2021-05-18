@@ -11,7 +11,9 @@ window.addEventListener('DOMContentLoaded', () => {
     info.style.fontFamily = "monospace";
 
     ipcRenderer.on('interpreter', (event, data) =>{
-        info.innerHTML = data.toString();
+        if(data.toString().toLowerCase().includes("python")){
+            info.innerHTML = data.toString();
+        }
     });
 
 })

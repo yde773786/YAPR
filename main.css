@@ -11,6 +11,7 @@ body{
 
 #interpreter-info{
     font-family: monospace;
+    margin-bottom: 10px;
 }
 
 #container{
