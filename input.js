@@ -1,12 +1,19 @@
+const {ipcRenderer} = require('electron')
+
 var input;
 var counter = 0;
 
 window.addEventListener('DOMContentLoaded', () => {
     newSlot();
-    let info = document.getElementById('interpreter-info');
-    info.innerHTML = global.result;
+    var info = document.getElementById('interpreter-info');
+    info.innerHTML = 'No Interpreter Selected';
     info.style.color = "white";
     info.style.fontFamily = "monospace";
+
+    ipcRenderer.on('interpreter', (event, data) =>{
+        info.innerHTML = data.toString();
+    });
+
 })
 
 function newSlot(continuation=false) {

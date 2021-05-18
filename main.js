@@ -3,8 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const exec = require('child_process').exec;
 
-global.pathInterpreter;
-global.result = 'No Valid Interpreter';
+var pathInterpreter;
 var child;
 
 function createWindow () {
@@ -29,10 +28,10 @@ function createWindow () {
                 dialog.showOpenDialog({properties: ['openFile']
             }).then(
                 (result) => {
-                                global.pathInterpreter = result.filePaths[0];
-                                child = exec(global.pathInterpreter + ' --version');
+                                pathInterpreter = result.filePaths[0];
+                                child = exec(pathInterpreter + ' --version');
                                 child.stdout.on('data', (data) => {
-                                        global.result = data;
+                                        win.webContents.send('interpreter', data);
                                 });
                             })
             }
