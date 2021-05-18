@@ -1,8 +1,11 @@
 const { app, BrowserWindow, Menu, dialog } = require('electron')
 const path = require('path')
 const fs = require('fs')
+const exec = require('child_process').exec;
 
-var pathInterpreter;
+global.pathInterpreter;
+global.result = 'No Valid Interpreter';
+var child;
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -24,7 +27,14 @@ function createWindow () {
         {label: 'Choose Interpreter',
             click: async (menuItem, browserWindow, event) => {
                 dialog.showOpenDialog({properties: ['openFile']
-            }).then((result) => {pathInterpreter = result.filePaths[0];})
+            }).then(
+                (result) => {
+                                global.pathInterpreter = result.filePaths[0];
+                                child = exec(global.pathInterpreter + ' --version');
+                                child.stdout.on('data', (data) => {
+                                        global.result = data;
+                                });
+                            })
             }
          }
     ]

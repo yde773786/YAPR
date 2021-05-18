@@ -9,6 +9,10 @@ body{
     margin-left: 0.3%;
 }
 
+#interpreter-info{
+    font-family: monospace;
+}
+
 #container{
     font-family: monospace;
 }

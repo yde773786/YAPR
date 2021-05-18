@@ -3,6 +3,10 @@ var counter = 0;
 
 window.addEventListener('DOMContentLoaded', () => {
     newSlot();
+    let info = document.getElementById('interpreter-info');
+    info.innerHTML = global.result;
+    info.style.color = "white";
+    info.style.fontFamily = "monospace";
 })
 
 function newSlot(continuation=false) {
