@@ -10,6 +10,12 @@ window.addEventListener('DOMContentLoaded', () => {
     info.style.fontFamily = "monospace";
 })
 
+document.addEventListener('keyup', (e) => {
+    if(e.keyCode == 13 && e.target.id == 'second' + (counter - 1)){
+        newSlot();
+    }
+})
+
 ipcRenderer.on('interpreter', (event, data) =>{
     var info = document.getElementById('interpreter-info');
     if(data.toString().toLowerCase().includes("python")){
@@ -27,7 +33,7 @@ function newSlot(continuation=false) {
     }
 
     let table = document.getElementById('interior');
-    let row = table.insertRow(counter++);
+    let row = table.insertRow(counter);
 
     let cell1 = row.insertCell(0);
     let cell2 = row.insertCell(1);
@@ -47,5 +53,9 @@ function newSlot(continuation=false) {
     input.style.width = "100%"
     input.style.fontFamily = "monospace";
 
+    status.id = "first" + counter;
+    input.id = "second" + counter;
+
+    counter++;
     cell2.appendChild(input);
 }
