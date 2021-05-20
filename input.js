@@ -1,6 +1,8 @@
 const {ipcRenderer} = require('electron')
 
 var historyInput = [];
+var pointer = 0;
+var pointToEdit = {'0' : ''};
 
 window.addEventListener('DOMContentLoaded', () => {
     newSlot();
@@ -8,16 +10,42 @@ window.addEventListener('DOMContentLoaded', () => {
     info.innerHTML = 'No Interpreter Selected';
     info.style.color = "white";
     info.style.fontFamily = "monospace";
-})
+});
 
 document.addEventListener('keyup', (e) => {
     if (e.target === historyInput[historyInput.length - 1]) {
         if(e.keyCode == 13){
+            pointer = 0;
+            console.log(pointToEdit);
+            pointToEdit = {'0' : ''};
             newSlot();
             historyInput[historyInput.length - 2].disabled = true;
         }
+        else if(e.keyCode == 38 || e.keyCode == 40){
+            if(e.keyCode == 38){
+                if(pointer != historyInput.length) {pointer++;}
+            }
+            else{
+                if(pointer != 0) {pointer--;}
+            }
+
+            let currDisp = '';
+
+            if(typeof(pointToEdit[pointer]) != 'undefined'){
+                currDisp = pointToEdit[pointer];
+            }
+            else{
+                currDisp = historyInput[historyInput.length - (pointer + 1)].value;
+            }
+
+            historyInput[historyInput.length - 1].value = currDisp;
+        }
+        else{
+            pointToEdit[pointer] =
+            historyInput[historyInput.length - (pointer + 1)].value;
+        }
     }
-})
+});
 
 ipcRenderer.on('interpreter', (event, data) =>{
     var info = document.getElementById('interpreter-info');
@@ -30,7 +58,7 @@ ipcRenderer.on('interpreter', (event, data) =>{
 });
 
 function newSlot(continuation=false) {
-    let firstElement = '&gt;&gt;&gt;'
+    let firstElement = '&gt;&gt;&gt;';
     if(continuation){
         // TODO: increase height of element
     }
