@@ -1,6 +1,6 @@
 const {ipcRenderer} = require('electron')
 
-var counter = 0;
+var historyInput = [];
 
 window.addEventListener('DOMContentLoaded', () => {
     newSlot();
@@ -11,8 +11,11 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 
 document.addEventListener('keyup', (e) => {
-    if(e.keyCode == 13 && e.target.id == 'second' + (counter - 1)){
-        newSlot();
+    if (e.target === historyInput[historyInput.length - 1]) {
+        if(e.keyCode == 13){
+            newSlot();
+            historyInput[historyInput.length - 2].disabled = true;
+        }
     }
 })
 
@@ -29,11 +32,11 @@ ipcRenderer.on('interpreter', (event, data) =>{
 function newSlot(continuation=false) {
     let firstElement = '&gt;&gt;&gt;'
     if(continuation){
-        firstElement = '...'
+        // TODO: increase height of element
     }
 
     let table = document.getElementById('interior');
-    let row = table.insertRow(counter);
+    let row = table.insertRow(historyInput.length);
 
     let cell1 = row.insertCell(0);
     let cell2 = row.insertCell(1);
@@ -53,9 +56,8 @@ function newSlot(continuation=false) {
     input.style.width = "100%"
     input.style.fontFamily = "monospace";
 
-    status.id = "first" + counter;
-    input.id = "second" + counter;
+    historyInput.push(input);
 
-    counter++;
     cell2.appendChild(input);
+    input.focus();
 }
