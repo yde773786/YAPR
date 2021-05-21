@@ -1,6 +1,7 @@
 const {ipcRenderer} = require('electron')
 
 var historyInput = [];
+var curr = null;
 var pointer = 0;
 var pointToEdit = {'0' : ''};
 
@@ -13,22 +14,28 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('keyup', (e) => {
-    if (e.target === historyInput[historyInput.length - 1]) {
+    if (e.target === curr) {
+
         if(e.keyCode == 13){
             pointer = 0;
             pointToEdit = {'0' : ''};
+            ipcRenderer.send('history-update', curr.value);
+            historyInput.push(curr.value);
+            curr.disabled = true;
             newSlot();
-            ipcRenderer.send('history-update',
-            historyInput[historyInput.length - 2].value);
-            historyInput[historyInput.length - 2].disabled = true;
         }
-        
+
         else if(e.keyCode == 38 || e.keyCode == 40){
+
             if(e.keyCode == 38){
-                if(pointer != historyInput.length) {pointer++;}
+                if(pointer != historyInput.length){
+                    pointer++;
+                }
             }
             else{
-                if(pointer != 0) {pointer--;}
+                if(pointer != 0) {
+                    pointer--;
+                }
             }
 
             let currDisp = '';
@@ -37,26 +44,27 @@ document.addEventListener('keyup', (e) => {
                 currDisp = pointToEdit[pointer];
             }
             else{
-                currDisp = historyInput[historyInput.length - (pointer + 1)].value;
+                currDisp = historyInput[historyInput.length - pointer];
             }
 
-            historyInput[historyInput.length - 1].value = currDisp;
+            curr.value = currDisp;
         }
         else{
-            pointToEdit[pointer] =
-            historyInput[historyInput.length - 1].value;
+            pointToEdit[pointer] = curr.value;
         }
     }
 });
 
 ipcRenderer.on('interpreter', (event, data) =>{
     var info = document.getElementById('interpreter-info');
-    if(data.toLowerCase().includes("python")){
-        info.innerHTML = data;
+    if(data.pi.toLowerCase().includes("python")){
+        info.innerHTML = data.pi;
     }
     else{
         info.innerHTML = "No Valid Interpreter Selected";
     }
+
+    historyInput = data.hs;
 });
 
 function newSlot(continuation=false) {
@@ -86,7 +94,7 @@ function newSlot(continuation=false) {
     input.style.width = "100%"
     input.style.fontFamily = "monospace";
 
-    historyInput.push(input);
+    curr = input;
 
     cell2.appendChild(input);
     input.focus();

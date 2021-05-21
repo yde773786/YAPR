@@ -33,9 +33,10 @@ function createWindow () {
                                 pathInterpreter = result.filePaths[0];
                                 let child = exec(pathInterpreter + ' --version');
                                 child.stdout.on('data', (data) => {
-                                        pathInterpreter = data.toString();
+                                        versionInterpreter = data.toString();
                                         win.webContents.send('interpreter',
-                                                            pathInterpreter);
+                                                            {pi: versionInterpreter,
+                                                            hs: history});
                                 });
                             })
             }
@@ -81,8 +82,12 @@ ipcMain.on('history-update', (e, update) => {
 });
 
 app.on('window-all-closed', () => {
-    console.log(history);
+
+    console.log('Interpreter Path: ' + pathInterpreter);
+    console.log('Interpreter Version: ' + versionInterpreter);
+    console.log('History: ' + history);
+
     if (process.platform !== 'darwin') {
-    app.quit()
+        app.quit()
     }
 })
