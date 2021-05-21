@@ -1,10 +1,12 @@
-const { app, BrowserWindow, Menu, dialog } = require('electron')
+const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
 const path = require('path')
+const storage = require('electron-json-storage');
 const fs = require('fs')
 const exec = require('child_process').exec;
 
 var pathInterpreter;
-var child;
+var versionInterpreter;
+var history = [];
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -29,9 +31,11 @@ function createWindow () {
             }).then(
                 (result) => {
                                 pathInterpreter = result.filePaths[0];
-                                child = exec(pathInterpreter + ' --version');
+                                let child = exec(pathInterpreter + ' --version');
                                 child.stdout.on('data', (data) => {
-                                        win.webContents.send('interpreter', data);
+                                        pathInterpreter = data.toString();
+                                        win.webContents.send('interpreter',
+                                                            pathInterpreter);
                                 });
                             })
             }
@@ -72,8 +76,13 @@ app.whenReady().then(() => {
   })
 })
 
+ipcMain.on('history-update', (e, update) => {
+    history.push(update);
+});
+
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+    console.log(history);
+    if (process.platform !== 'darwin') {
     app.quit()
-  }
+    }
 })

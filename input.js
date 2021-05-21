@@ -16,13 +16,14 @@ document.addEventListener('keyup', (e) => {
     if (e.target === historyInput[historyInput.length - 1]) {
         if(e.keyCode == 13){
             pointer = 0;
-            console.log(pointToEdit);
             pointToEdit = {'0' : ''};
             newSlot();
+            ipcRenderer.send('history-update',
+            historyInput[historyInput.length - 2].value);
             historyInput[historyInput.length - 2].disabled = true;
         }
+        
         else if(e.keyCode == 38 || e.keyCode == 40){
-            console.log(pointToEdit);
             if(e.keyCode == 38){
                 if(pointer != historyInput.length) {pointer++;}
             }
@@ -50,8 +51,8 @@ document.addEventListener('keyup', (e) => {
 
 ipcRenderer.on('interpreter', (event, data) =>{
     var info = document.getElementById('interpreter-info');
-    if(data.toString().toLowerCase().includes("python")){
-        info.innerHTML = data.toString();
+    if(data.toLowerCase().includes("python")){
+        info.innerHTML = data;
     }
     else{
         info.innerHTML = "No Valid Interpreter Selected";
