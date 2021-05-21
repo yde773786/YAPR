@@ -22,6 +22,7 @@ document.addEventListener('keyup', (e) => {
             historyInput[historyInput.length - 2].disabled = true;
         }
         else if(e.keyCode == 38 || e.keyCode == 40){
+            console.log(pointToEdit);
             if(e.keyCode == 38){
                 if(pointer != historyInput.length) {pointer++;}
             }
@@ -42,7 +43,7 @@ document.addEventListener('keyup', (e) => {
         }
         else{
             pointToEdit[pointer] =
-            historyInput[historyInput.length - (pointer + 1)].value;
+            historyInput[historyInput.length - 1].value;
         }
     }
 });
