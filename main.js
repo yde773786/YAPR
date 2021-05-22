@@ -1,12 +1,12 @@
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
 const path = require('path')
-const storage = require('electron-json-storage');
 const fs = require('fs')
 const exec = require('child_process').exec;
 
 var pathInterpreter;
 var versionInterpreter;
 var history = [];
+var storePath = path.join(app.getPath('userData'), 'store.json');
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -23,7 +23,7 @@ function createWindow () {
     submenu: [
         {label: 'Clear',
          click: async () => {
-             console.log('CLICKED ME');
+             console.log('CLICKED CLEAR');
          }},
         {label: 'Choose Interpreter',
             click: async (menuItem, browserWindow, event) => {
@@ -68,7 +68,12 @@ function createWindow () {
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  createWindow();
+
+  storedVal = JSON.parse(fs.readFileSync(storePath));
+  pathInterpreter = storedVal.path;
+  versionInterpreter = storedVal.version;
+  history = storedVal.history;
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -82,10 +87,11 @@ ipcMain.on('history-update', (e, update) => {
 });
 
 app.on('window-all-closed', () => {
-
-    console.log('Interpreter Path: ' + pathInterpreter);
-    console.log('Interpreter Version: ' + versionInterpreter);
-    console.log('History: ' + history);
+    fs.writeFileSync(storePath, JSON.stringify(
+        {path: pathInterpreter,
+        version: versionInterpreter,
+        history: history}
+    ));
 
     if (process.platform !== 'darwin') {
         app.quit()
