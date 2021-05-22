@@ -1,3 +1,3 @@
-#YAPR
+# YAPR
 
 Yet Another Python REPL
