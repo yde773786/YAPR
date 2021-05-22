@@ -17,6 +17,10 @@ function createWindow () {
     }
   })
 
+  win.webContents.send('interpreter',
+                      {pi: versionInterpreter,
+                      hs: history});
+
   const template = [
   {
     label: 'Actions',
@@ -34,9 +38,8 @@ function createWindow () {
                                 let child = exec(pathInterpreter + ' --version');
                                 child.stdout.on('data', (data) => {
                                         versionInterpreter = data.toString();
-                                        win.webContents.send('interpreter',
-                                                            {pi: versionInterpreter,
-                                                            hs: history});
+                                        win.webContents.send('interpreter-update',
+                                                            versionInterpreter);
                                 });
                             })
             }
@@ -68,12 +71,14 @@ function createWindow () {
 }
 
 app.whenReady().then(() => {
-  createWindow();
 
   storedVal = JSON.parse(fs.readFileSync(storePath));
+  console.log(storedVal);
   pathInterpreter = storedVal.path;
   versionInterpreter = storedVal.version;
   history = storedVal.history;
+
+  createWindow();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

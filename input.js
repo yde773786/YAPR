@@ -2,6 +2,7 @@ const {ipcRenderer} = require('electron')
 
 var historyInput = [];
 var curr = null;
+var cnt = 0;
 var pointer = 0;
 var pointToEdit = {'0' : ''};
 
@@ -65,6 +66,17 @@ ipcRenderer.on('interpreter', (event, data) =>{
     }
 
     historyInput = data.hs;
+    console.log(historyInput);
+});
+
+ipcRenderer.on('interpreter-update', (event, data) =>{
+    var info = document.getElementById('interpreter-info');
+    if(data.toLowerCase().includes("python")){
+        info.innerHTML = data;
+    }
+    else{
+        info.innerHTML = "No Valid Interpreter Selected";
+    }
 });
 
 function newSlot(continuation=false) {
@@ -74,7 +86,7 @@ function newSlot(continuation=false) {
     }
 
     let table = document.getElementById('interior');
-    let row = table.insertRow(historyInput.length);
+    let row = table.insertRow(cnt++);
 
     let cell1 = row.insertCell(0);
     let cell2 = row.insertCell(1);
