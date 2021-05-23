@@ -16,14 +16,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('keyup', (e) => {
     if (e.target === curr) {
-
         if(e.keyCode == 13){
-            pointer = 0;
-            pointToEdit = {'0' : ''};
-            ipcRenderer.send('history-update', curr.value);
-            historyInput.push(curr.value);
-            curr.disabled = true;
-            newSlot();
+            if(true){
+                pointer = 0;
+                pointToEdit = {'0' : ''};
+                ipcRenderer.send('history-update', curr.value);
+                historyInput.push(curr.value);
+                curr.disabled = true;
+                newSlot();
+            }
+            else{
+                curr.rows++;
+            }
         }
 
         else if(e.keyCode == 38 || e.keyCode == 40){
@@ -66,7 +70,6 @@ ipcRenderer.on('interpreter', (event, data) =>{
     }
 
     historyInput = data.hs;
-    console.log(historyInput);
 });
 
 ipcRenderer.on('interpreter-update', (event, data) =>{
@@ -79,12 +82,8 @@ ipcRenderer.on('interpreter-update', (event, data) =>{
     }
 });
 
-function newSlot(continuation=false) {
+function newSlot() {
     let firstElement = '&gt;&gt;&gt;';
-    if(continuation){
-        // TODO: increase height of element
-    }
-
     let table = document.getElementById('interior');
     let row = table.insertRow(cnt++);
 
@@ -100,7 +99,9 @@ function newSlot(continuation=false) {
 
     cell1.appendChild(status);
 
-    let input = document.createElement('INPUT')
+    let input = document.createElement('TEXTAREA');
+    input.rows = "1";
+    input.cols = "1";
     input.style.color = "white";
     input.style.background = "transparent";
     input.style.width = "100%"

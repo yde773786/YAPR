@@ -73,7 +73,6 @@ function createWindow () {
 app.whenReady().then(() => {
 
   storedVal = JSON.parse(fs.readFileSync(storePath));
-  console.log(storedVal);
   pathInterpreter = storedVal.path;
   versionInterpreter = storedVal.version;
   history = storedVal.history;
