@@ -6,12 +6,7 @@ var curr = null;
 var cnt = 0;
 var pointer = 0;
 var pointToEdit = {'0' : ''};
-
-const py = spawn("python", ["-i"]);
-
-py.stdout.on("data", (data) => {
-  console.log(data.toString());
-});
+var py;
 
 window.addEventListener('DOMContentLoaded', () => {
     newSlot();
@@ -27,10 +22,12 @@ document.addEventListener('keyup', (e) => {
             if(true){
                 pointer = 0;
                 pointToEdit = {'0' : ''};
+
                 py.stdin.write(curr.value);
                 ipcRenderer.send('history-update', curr.value);
                 historyInput.push(curr.value);
                 curr.disabled = true;
+
                 newSlot();
             }
             else{
@@ -77,17 +74,15 @@ ipcRenderer.on('interpreter', (event, data) =>{
         info.innerHTML = "No Valid Interpreter Selected";
     }
 
-    historyInput = data.hs;
-});
+    if(typeof(data.hs != 'undefined')){
+        historyInput = data.hs;
+    }
 
-ipcRenderer.on('interpreter-update', (event, data) =>{
-    var info = document.getElementById('interpreter-info');
-    if(data.toLowerCase().includes("python")){
-        info.innerHTML = data;
-    }
-    else{
-        info.innerHTML = "No Valid Interpreter Selected";
-    }
+    py = spawn(data.pt, ["-i"]);
+
+    py.stdout.on("data", (data) => {
+      console.log(data.toString());
+    });
 });
 
 function newSlot() {

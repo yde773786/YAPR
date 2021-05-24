@@ -19,7 +19,8 @@ function createWindow () {
 
   win.webContents.send('interpreter',
                       {pi: versionInterpreter,
-                      hs: history});
+                      hs: history,
+                      pt: pathInterpreter});
 
   const template = [
   {
@@ -38,8 +39,11 @@ function createWindow () {
                                 let child = exec(pathInterpreter + ' --version');
                                 child.stdout.on('data', (data) => {
                                         versionInterpreter = data.toString();
-                                        win.webContents.send('interpreter-update',
-                                                            versionInterpreter);
+                                        win.webContents.send('interpreter',
+                                                            {
+                                                                pi: versionInterpreter,
+                                                                pt: pathInterpreter
+                                                            });
                                 });
                             })
             }
