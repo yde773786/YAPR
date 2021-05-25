@@ -39,31 +39,33 @@ document.addEventListener('keyup', (e) => {
 
         else if(e.keyCode == 38 || e.keyCode == 40){
 
-            if(e.keyCode == 38){
-                if(pointer != historyInput.length){
-                    pointer++;
-                }
+            let currDisp = curr.value;
+            let currRows = curr.rows;
+            let temp = pointer;
+
+            if(e.keyCode == 38 && pointer != historyInput.length){
+                pointer++;
             }
-            else{
-                if(pointer != 0) {
-                    pointer--;
-                }
+            else if(e.keyCode == 40 && pointer != 0){
+                pointer--;
             }
 
-            let currDisp = '';
-            let currRows = 0;
+            if(temp != pointer){
 
-            if(typeof(pointToEdit[pointer]) != 'undefined'){
-                currDisp = pointToEdit[pointer].value;
-                currRows = pointToEdit[pointer].space;
-            }
-            else {
-                currDisp = historyInput[historyInput.length - pointer].value;
-                currRows = historyInput[historyInput.length - pointer].space;
+                if(typeof(pointToEdit[pointer]) != 'undefined'){
+                    currDisp = pointToEdit[pointer].value;
+                    currRows = pointToEdit[pointer].space;
+                }
+                else {
+                    currDisp = historyInput[historyInput.length - pointer].value;
+                    currRows = historyInput[historyInput.length - pointer].space;
+                }
+
             }
 
             curr.value = currDisp;
             curr.rows = currRows;
+
         }
         else{
             pointToEdit[pointer] = {value: '', space: 0};
