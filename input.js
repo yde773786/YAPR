@@ -19,21 +19,22 @@ window.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('keyup', (e) => {
     if (e.target === curr) {
         if(e.keyCode == 13){
-            curr.rows++;
 
             if(true){
                 pointer = 0;
                 pointToEdit = {'0' : {value: '', space: 1}};
-
                 py.stdin.write(curr.value);
                 newestAddition = {value: curr.value, space: curr.rows};
 
                 ipcRenderer.send('history-update', newestAddition);
                 historyInput.push(newestAddition);
 
+                curr.value = curr.value.trim()
                 curr.disabled = true;
-                console.log(curr.rows);
                 newSlot();
+            }
+            else{
+                curr.rows++;
             }
         }
 
@@ -101,6 +102,7 @@ ipcRenderer.on('interpreter', (event, data) =>{
 });
 
 function newSlot() {
+    
     let firstElement = '&gt;&gt;&gt;';
     let table = document.getElementById('interior');
     let row = table.insertRow(cnt++);
