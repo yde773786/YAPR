@@ -5,7 +5,7 @@ var historyInput = [];
 var curr = null;
 var cnt = 0;
 var pointer = 0;
-var pointToEdit = {'0' : ''};
+var pointToEdit = {'0' : {value: '', space: 0}};
 var py;
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -19,19 +19,21 @@ window.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('keyup', (e) => {
     if (e.target === curr) {
         if(e.keyCode == 13){
+            curr.rows++;
+
             if(true){
                 pointer = 0;
-                pointToEdit = {'0' : ''};
+                pointToEdit = {'0' : {value: '', space: 1}};
 
                 py.stdin.write(curr.value);
-                ipcRenderer.send('history-update', curr.value);
-                historyInput.push(curr.value);
-                curr.disabled = true;
+                newestAddition = {value: curr.value, space: curr.rows};
 
+                ipcRenderer.send('history-update', newestAddition);
+                historyInput.push(newestAddition);
+
+                curr.disabled = true;
+                console.log(curr.rows);
                 newSlot();
-            }
-            else{
-                curr.rows++;
             }
         }
 
@@ -49,24 +51,31 @@ document.addEventListener('keyup', (e) => {
             }
 
             let currDisp = '';
+            let currRows = 0;
 
             if(typeof(pointToEdit[pointer]) != 'undefined'){
-                currDisp = pointToEdit[pointer];
+                currDisp = pointToEdit[pointer].value;
+                currRows = pointToEdit[pointer].space;
             }
-            else{
-                currDisp = historyInput[historyInput.length - pointer];
+            else {
+                currDisp = historyInput[historyInput.length - pointer].value;
+                currRows = historyInput[historyInput.length - pointer].space;
             }
 
             curr.value = currDisp;
+            curr.rows = currRows;
         }
         else{
-            pointToEdit[pointer] = curr.value;
+            pointToEdit[pointer] = {value: '', space: 0};
+            pointToEdit[pointer].value = curr.value;
+            currRows = curr.rows;
         }
     }
 });
 
 ipcRenderer.on('interpreter', (event, data) =>{
     var info = document.getElementById('interpreter-info');
+
     if(data.pi.toLowerCase().includes("python")){
         info.innerHTML = data.pi;
     }
@@ -74,15 +83,19 @@ ipcRenderer.on('interpreter', (event, data) =>{
         info.innerHTML = "No Valid Interpreter Selected";
     }
 
-    if(typeof(data.hs != 'undefined')){
+    if(typeof(data.hs) != 'undefined'){
         historyInput = data.hs;
     }
 
-    py = spawn(data.pt, ["-i"]);
+    if(info.innerHTML != "No Valid Interpreter Selected"){
+        console.log(info.innerHTML);
+        py = spawn(data.pt, ["-i"]);
 
-    py.stdout.on("data", (data) => {
-      console.log(data.toString());
-    });
+        py.stdout.on("data", (data) => {
+          console.log(data.toString());
+        });
+    }
+
 });
 
 function newSlot() {
@@ -103,12 +116,15 @@ function newSlot() {
     cell1.appendChild(status);
 
     let input = document.createElement('TEXTAREA');
+
     input.rows = "1";
     input.cols = "1";
+
     input.style.color = "white";
     input.style.background = "transparent";
     input.style.width = "100%"
     input.style.fontFamily = "monospace";
+    input.style.overflow = "hidden";
 
     curr = input;
 
