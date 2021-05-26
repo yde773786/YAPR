@@ -5,7 +5,7 @@ var historyInput = [];
 var curr = null;
 var cnt = 0;
 var pointer = 0;
-var pointToEdit = {'0' : {value: '', space: 0}};
+var pointToEdit = {'0' : {value: '', space: 1}};
 var py;
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -24,13 +24,13 @@ document.addEventListener('keyup', (e) => {
                 pointer = 0;
                 pointToEdit = {'0' : {value: '', space: 1}};
                 py.stdin.write(curr.value);
-                newestAddition = {value: curr.value, space: curr.rows};
-
-                ipcRenderer.send('history-update', newestAddition);
-                historyInput.push(newestAddition);
 
                 curr.value = curr.value.trim()
                 curr.disabled = true;
+
+                newestAddition = {value: curr.value, space: curr.rows};
+                ipcRenderer.send('history-update', newestAddition);
+                historyInput.push(newestAddition);
                 newSlot();
             }
             else{
@@ -51,27 +51,22 @@ document.addEventListener('keyup', (e) => {
                 pointer--;
             }
 
-            if(temp != pointer){
-
-                if(typeof(pointToEdit[pointer]) != 'undefined'){
-                    currDisp = pointToEdit[pointer].value;
-                    currRows = pointToEdit[pointer].space;
-                }
-                else {
-                    currDisp = historyInput[historyInput.length - pointer].value;
-                    currRows = historyInput[historyInput.length - pointer].space;
-                }
-
+            if(typeof(pointToEdit[pointer]) != 'undefined'){
+                currDisp = pointToEdit[pointer].value;
+                currRows = pointToEdit[pointer].space;
+            }
+            else if(temp != pointer) {
+                currDisp = historyInput[historyInput.length - pointer].value;
+                currRows = historyInput[historyInput.length - pointer].space;
             }
 
             curr.value = currDisp;
             curr.rows = currRows;
 
         }
-        else{
-            pointToEdit[pointer] = {value: '', space: 0};
-            pointToEdit[pointer].value = curr.value;
-            currRows = curr.rows;
+        else {
+            curr.rows = curr.value.split('\n').length
+            pointToEdit[pointer] = {value: curr.value, space: curr.rows};
         }
     }
 });
@@ -102,7 +97,7 @@ ipcRenderer.on('interpreter', (event, data) =>{
 });
 
 function newSlot() {
-    
+
     let firstElement = '&gt;&gt;&gt;';
     let table = document.getElementById('interior');
     let row = table.insertRow(cnt++);
