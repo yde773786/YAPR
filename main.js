@@ -100,6 +100,12 @@ ipcMain.on('history-update', (e, update) => {
     history.push(update);
 });
 
+ipcMain.on('cannot-interpret', (e) => {
+    dialog.showErrorBox('Cannot Execute', "Cannot execute program as" +
+                                        " no valid Interpreter" +
+                                        " is found.");
+});
+
 app.on('window-all-closed', () => {
     fs.writeFileSync(storePath, JSON.stringify(
         {path: pathInterpreter,

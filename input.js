@@ -1,4 +1,4 @@
-const {ipcRenderer} = require('electron')
+const {ipcRenderer} = require('electron');
 const { spawn } = require('child_process');
 
 var historyInput = [];
@@ -7,6 +7,7 @@ var cnt = 0;
 var pointer = 0;
 var pointToEdit = {'0' : {value: '', space: 1}};
 var py;
+var proceed;
 
 window.addEventListener('DOMContentLoaded', () => {
     newSlot();
@@ -18,23 +19,30 @@ window.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('keyup', (e) => {
     if (e.target === curr) {
+
         if(e.keyCode == 13){
+            if(proceed){
+                if(true){
+                    pointer = 0;
+                    pointToEdit = {'0' : {value: '', space: 1}};
+                    py.stdin.write(curr.value);
 
-            if(true){
-                pointer = 0;
-                pointToEdit = {'0' : {value: '', space: 1}};
-                py.stdin.write(curr.value);
+                    curr.value = curr.value.trim();
+                    curr.disabled = true;
 
-                curr.value = curr.value.trim()
-                curr.disabled = true;
-
-                newestAddition = {value: curr.value, space: curr.rows};
-                ipcRenderer.send('history-update', newestAddition);
-                historyInput.push(newestAddition);
-                newSlot();
+                    newestAddition = {value: curr.value, space: curr.rows};
+                    ipcRenderer.send('history-update', newestAddition);
+                    historyInput.push(newestAddition);
+                    newSlot();
+                }
+                else{
+                    curr.rows++;
+                }
             }
             else{
-                curr.rows++;
+                ipcRenderer.send('cannot-interpret');
+                curr.value = curr.value.trim()
+                curr.rows = 1;
             }
         }
 
@@ -86,12 +94,15 @@ ipcRenderer.on('interpreter', (event, data) =>{
     }
 
     if(info.innerHTML != "No Valid Interpreter Selected"){
-        console.log(info.innerHTML);
         py = spawn(data.pt, ["-i"]);
+        proceed = true;
 
         py.stdout.on("data", (data) => {
           console.log(data.toString());
         });
+    }
+    else{
+        proceed = false;
     }
 
 });
