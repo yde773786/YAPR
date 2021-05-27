@@ -80,6 +80,15 @@ document.addEventListener('keydown', (e) => {
             curr.rows = currRows;
         }
 
+        if(e.keyCode == 9){
+            e.preventDefault();
+
+            let head = curr.selectionStart;
+            let tail = curr.selectionEnd;
+
+            curr.value = curr.value.substring(0, head) + "\t" + curr.
+            value.substring(tail);
+        }
     }
 });
 
