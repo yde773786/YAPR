@@ -45,9 +45,17 @@ document.addEventListener('keyup', (e) => {
                 curr.rows = 1;
             }
         }
+        else {
+            curr.rows = curr.value.split('\n').length
+            pointToEdit[pointer] = {value: curr.value, space: curr.rows};
+        }
+    }
+});
 
-        else if(e.keyCode == 38 || e.keyCode == 40){
+document.addEventListener('keydown', (e) => {
+    if (e.target === curr) {
 
+        if(e.keyCode == 38 || e.keyCode == 40){
             let currDisp = curr.value;
             let currRows = curr.rows;
             let temp = pointer;
@@ -70,12 +78,8 @@ document.addEventListener('keyup', (e) => {
 
             curr.value = currDisp;
             curr.rows = currRows;
+        }
 
-        }
-        else {
-            curr.rows = curr.value.split('\n').length
-            pointToEdit[pointer] = {value: curr.value, space: curr.rows};
-        }
     }
 });
 
