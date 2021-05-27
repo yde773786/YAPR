@@ -28,24 +28,24 @@ function createWindow () {
     submenu: [
         {label: 'Clear',
          click: async () => {
-             console.log('CLICKED CLEAR');
+             win.webContents.send('clear');
          }},
         {label: 'Choose Interpreter',
             click: async (menuItem, browserWindow, event) => {
                 dialog.showOpenDialog({properties: ['openFile']
             }).then(
                 (result) => {
-                                pathInterpreter = result.filePaths[0];
-                                let child = exec(pathInterpreter + ' --version');
-                                child.stdout.on('data', (data) => {
-                                        versionInterpreter = data.toString();
-                                        win.webContents.send('interpreter',
-                                                            {
-                                                                pi: versionInterpreter,
-                                                                pt: pathInterpreter
-                                                            });
+                    pathInterpreter = result.filePaths[0];
+                    let child = exec(pathInterpreter + ' --version');
+                    child.stdout.on('data', (data) => {
+                        versionInterpreter = data.toString();
+                        win.webContents.send('interpreter',
+                                {
+                                    pi: versionInterpreter,
+                                    pt: pathInterpreter
                                 });
-                            })
+                    });
+                })
             }
          }
     ]
@@ -53,8 +53,6 @@ function createWindow () {
   {
     label: 'View',
     submenu: [
-      { role: 'reload' },
-      { role: 'forceReload' },
       { role: 'toggleDevTools' },
       { role: 'togglefullscreen' }
     ]

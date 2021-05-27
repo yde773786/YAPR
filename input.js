@@ -107,6 +107,16 @@ ipcRenderer.on('interpreter', (event, data) =>{
 
 });
 
+ipcRenderer.on('clear', (e) => {
+    let table = document.getElementById('interior');
+    while(table.rows.length > 0) {
+        table.deleteRow(0);
+    }
+
+    cnt = 0;
+    newSlot();
+});
+
 function newSlot() {
 
     let firstElement = '&gt;&gt;&gt;';
