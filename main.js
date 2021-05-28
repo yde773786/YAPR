@@ -8,6 +8,8 @@ var versionInterpreter;
 var history = [];
 var storePath = path.join(app.getPath('userData'), 'store.json');
 
+/*Creates window with custom menu. Provide ability to
+change interpreter.*/
 function createWindow () {
   const win = new BrowserWindow({
     width: 800,
@@ -72,6 +74,8 @@ function createWindow () {
   win.loadFile('index.html')
 }
 
+/*read currently available persisten storage and pass
+to renderer process.*/
 app.whenReady().then(() => {
 
   try{
@@ -94,16 +98,20 @@ app.whenReady().then(() => {
   })
 })
 
+/*Register new input for persistence*/
 ipcMain.on('history-update', (e, update) => {
     history.push(update);
 });
 
+/*Error for invalid interpreter.*/
 ipcMain.on('cannot-interpret', (e) => {
     dialog.showErrorBox('Cannot Execute', "Cannot execute program as" +
                                         " no valid Interpreter" +
                                         " is found.");
 });
 
+/*Write to persistent storage the new inputs before
+closing the application.*/
 app.on('window-all-closed', () => {
     fs.writeFileSync(storePath, JSON.stringify(
         {path: pathInterpreter,

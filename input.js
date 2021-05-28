@@ -9,6 +9,7 @@ var pointToEdit = {'0' : {value: '', space: 1}};
 var py;
 var proceed;
 
+/* When window opens, have one textarea ready for input. */
 window.addEventListener('DOMContentLoaded', () => {
     newSlot();
     var info = document.getElementById('interpreter-info');
@@ -17,6 +18,9 @@ window.addEventListener('DOMContentLoaded', () => {
     info.style.fontFamily = "monospace";
 });
 
+/*Enter key persists input as well as creates a
+new textarea for new input. Extra newlines must
+be trimmed accordingly.*/
 document.addEventListener('keyup', (e) => {
     if (e.target === curr) {
 
@@ -52,6 +56,9 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
+/*Deals with up/down arrow keys and providing
+the required input from history log. Also overrides
+tab default action for indentation.*/
 document.addEventListener('keydown', (e) => {
     if (e.target === curr) {
 
@@ -92,6 +99,8 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+/*Check if interpreter input is valid. If so, proceed.
+Else, give a warning to enter valid interpreter.*/
 ipcRenderer.on('interpreter', (event, data) =>{
     var info = document.getElementById('interpreter-info');
 
@@ -120,6 +129,7 @@ ipcRenderer.on('interpreter', (event, data) =>{
 
 });
 
+/*Clears the console.*/
 ipcRenderer.on('clear', (e) => {
     let table = document.getElementById('interior');
     while(table.rows.length > 0) {
@@ -130,6 +140,7 @@ ipcRenderer.on('clear', (e) => {
     newSlot();
 });
 
+/*Renders the next table row with required cells.*/
 function newSlot() {
 
     let firstElement = '&gt;&gt;&gt;';
