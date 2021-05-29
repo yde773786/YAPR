@@ -40,28 +40,39 @@ document.addEventListener('keyup', (e) => {
                         can occur.*/
                         return new Promise((resolve) => {
 
-                            py.stdout.on("data", (data) => {
-                                console.log('out ' + data.toString());
-                                let table = document.getElementById('interior');
-                                let row = table.insertRow(cnt++);
+                            py.stdout.once("data", (data) => {
+                                resolve(['valid', data.toString()]);
+                            });
 
-                                let cell = row.insertCell(0);
-                                cell.colSpan = 2;
-
-                                let output = document.createElement('P');
-                                let strOut = data.toString();
-
-                                output.innerHTML = strOut.fontcolor("white");
-                                cell.appendChild(output);
-                                console.log('Interpreter');
-                                resolve();
+                            py.stderr.once("data", (data) => {
+                                resolve(['invalid', data.toString()]);
                             });
                         });
 
                     }
 
                     async function restart(){
-                        await executeInput();
+
+                        let outType = await executeInput();
+
+                        if(outType[0] === 'valid'){
+                            let table = document.getElementById('interior');
+                            let row = table.insertRow(cnt++);
+
+                            let cell = row.insertCell(0);
+                            cell.colSpan = 2;
+
+                            let output = document.createElement('P');
+                            let strOut = outType[1];
+
+                            output.innerHTML = strOut.fontcolor("white");
+                            cell.appendChild(output);
+                            console.log('Interpreter');
+                        }
+                        else{
+                            console.log('INVALID');
+                            console.log(outType[1]);
+                        }
 
                         curr.value = curr.value.trim();
                         curr.disabled = true;
