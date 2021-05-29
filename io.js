@@ -55,7 +55,18 @@ document.addEventListener('keyup', (e) => {
 
                         let outType = await executeInput();
 
-                        if(outType[0] === 'valid'){
+                        function stderrDealer(){
+                            if(outType[0] === 'valid'){
+                                return false;
+                            }
+                            else if(outType[1].toLowerCase().includes('error')){
+                                return true;
+                            }
+
+                            return false;
+                        }
+
+                        if(outType[0] === 'valid' || stderrDealer()){
                             let table = document.getElementById('interior');
                             let row = table.insertRow(cnt++);
 
@@ -65,13 +76,13 @@ document.addEventListener('keyup', (e) => {
                             let output = document.createElement('P');
                             let strOut = outType[1];
 
-                            output.innerHTML = strOut.fontcolor("white");
+                            if(outType[0] === 'valid'){
+                                output.innerHTML = strOut.fontcolor("white");
+                            }
+                            else{
+                                output.innerHTML = strOut.fontcolor("red");
+                            }
                             cell.appendChild(output);
-                            console.log('Interpreter');
-                        }
-                        else{
-                            console.log('INVALID');
-                            console.log(outType[1]);
                         }
 
                         curr.value = curr.value.trim();
@@ -80,7 +91,7 @@ document.addEventListener('keyup', (e) => {
                         newestAddition = {value: curr.value, space: curr.rows};
                         ipcRenderer.send('history-update', newestAddition);
                         historyInput.push(newestAddition);
-                        console.log('Next!');
+
                         newSlot();
                     }
 
