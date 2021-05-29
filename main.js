@@ -15,7 +15,7 @@ function createWindow () {
     width: 800,
     height: 400,
     webPreferences: {
-      preload: path.join(__dirname, 'input.js')
+      preload: path.join(__dirname, 'io.js')
     }
   })
 

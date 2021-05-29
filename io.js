@@ -25,19 +25,56 @@ document.addEventListener('keyup', (e) => {
     if (e.target === curr) {
 
         if(e.keyCode == 13){
+
             if(proceed){
                 if(true){
                     pointer = 0;
                     pointToEdit = {'0' : {value: '', space: 1}};
+
                     py.stdin.write(curr.value);
 
-                    curr.value = curr.value.trim();
-                    curr.disabled = true;
+                    function executeInput() {
 
-                    newestAddition = {value: curr.value, space: curr.rows};
-                    ipcRenderer.send('history-update', newestAddition);
-                    historyInput.push(newestAddition);
-                    newSlot();
+                        /*Delay the normal execution of a key press of
+                        Enter key so that the execution of child process
+                        can occur.*/
+                        return new Promise((resolve) => {
+
+                            py.stdout.on("data", (data) => {
+                                console.log('out ' + data.toString());
+                                let table = document.getElementById('interior');
+                                let row = table.insertRow(cnt++);
+
+                                let cell = row.insertCell(0);
+                                cell.colSpan = 2;
+
+                                let output = document.createElement('P');
+                                let strOut = data.toString();
+
+                                output.innerHTML = strOut.fontcolor("white");
+                                cell.appendChild(output);
+                                console.log('Interpreter');
+                                resolve();
+                            });
+                        });
+
+                    }
+
+                    async function restart(){
+                        await executeInput();
+
+                        curr.value = curr.value.trim();
+                        curr.disabled = true;
+
+                        newestAddition = {value: curr.value, space: curr.rows};
+                        ipcRenderer.send('history-update', newestAddition);
+                        historyInput.push(newestAddition);
+                        console.log('Next!');
+                        newSlot();
+                    }
+
+                    restart();
+
                 }
                 else{
                     curr.rows++;
@@ -63,6 +100,8 @@ document.addEventListener('keydown', (e) => {
     if (e.target === curr) {
 
         if(e.keyCode == 38 || e.keyCode == 40){
+            e.preventDefault();
+
             let currDisp = curr.value;
             let currRows = curr.rows;
             let temp = pointer;
@@ -85,6 +124,7 @@ document.addEventListener('keydown', (e) => {
 
             curr.value = currDisp;
             curr.rows = currRows;
+
         }
 
         if(e.keyCode == 9){
@@ -119,9 +159,6 @@ ipcRenderer.on('interpreter', (event, data) =>{
         py = spawn(data.pt, ["-i"]);
         proceed = true;
 
-        py.stdout.on("data", (data) => {
-          console.log(data.toString());
-        });
     }
     else{
         proceed = false;
