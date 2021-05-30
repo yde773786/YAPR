@@ -191,7 +191,24 @@ ipcRenderer.on('interpreter', (event, data) =>{
 
     if(info.innerHTML != "No Valid Interpreter Selected"){
         py = spawn(data.pt, ["-i"]);
-        proceed = true;
+
+        /*Send in dummy input for initial version stderr removal*/
+        py.stdin.write('dummy\n');
+
+        function dummyPromise() {
+            return new Promise(function(resolve) {
+                py.stderr.once("data", (data) => {
+                    resolve();
+                });
+            });
+        }
+
+        async function dummyAwait(){
+            await dummyPromise();
+            proceed = true;
+        }
+
+        dummyAwait();
     }
     else{
         proceed = false;
