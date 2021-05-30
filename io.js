@@ -80,6 +80,8 @@ document.addEventListener('keyup', (e) => {
                             let output = document.createElement('P');
                             let strOut = outType[1];
 
+                            output.style.whiteSpace = "pre-wrap";
+
                             if(outType[0] === 'valid'){
                                 output.innerHTML = strOut.fontcolor("white");
                             }
