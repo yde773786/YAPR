@@ -51,6 +51,9 @@ document.addEventListener('keyup', (e) => {
 
                     }
 
+                    /*Wait until the stdout or stderr has been received from the
+                    python console. Depending on that, customize and provide the
+                    output (or lack thereof).*/
                     async function restart(){
 
                         let outType = await executeInput();
@@ -180,7 +183,6 @@ ipcRenderer.on('interpreter', (event, data) =>{
     if(info.innerHTML != "No Valid Interpreter Selected"){
         py = spawn(data.pt, ["-i"]);
         proceed = true;
-
     }
     else{
         proceed = false;

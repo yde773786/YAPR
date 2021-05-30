@@ -1,8 +1,8 @@
 {
-    "name": "electron-python-console",
+    "name": "YAPR",
     "version": "0.1.0",
     "author": "Nikhil Sreekumar",
-    "description": "Python REPL written with electron for beautification and use case purposes.",
+    "description": "Yet Another Python REPL",
     "main": "main.js",
     "scripts": {
         "start": "electron ."

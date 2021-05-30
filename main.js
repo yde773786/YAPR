@@ -63,7 +63,7 @@ function createWindow () {
     label: 'Source',
     click: async () => {
       const { shell } = require('electron')
-      await shell.openExternal('https://github.com/yde773786/electron-python-console')
+      await shell.openExternal('https://github.com/yde773786/YAPR')
     }
   }
 ]
