@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
 const path = require('path')
 const fs = require('fs')
 const exec = require('child_process').exec;
+const LIMITER = 1000;
 
 var pathInterpreter;
 var versionInterpreter;
@@ -98,9 +99,14 @@ app.whenReady().then(() => {
   })
 })
 
-/*Register new input for persistence*/
+/*Register new input for persistence. If length
+of history exceeds limit, pop out earliest entries.*/
 ipcMain.on('history-update', (e, update) => {
+    if(history.length == LIMITER){
+        history.shift();
+    }
     history.push(update);
+    console.log(history.length);
 });
 
 /*Error for invalid interpreter.*/
