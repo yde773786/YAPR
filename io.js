@@ -45,7 +45,8 @@ document.addEventListener('keyup', (e) => {
                             });
 
                             py.stderr.once("data", (data) => {
-                                resolve(['invalid', data.toString()]);
+                                resolve(['invalid', data.toString().
+                                replace('>>>', '')]);
                             });
                         });
 
@@ -88,7 +89,8 @@ document.addEventListener('keyup', (e) => {
                             cell.appendChild(output);
                         }
 
-                        curr.value = curr.value.trim();
+                        //Replace leading and trailing NEWLINES ONLY.
+                        curr.value = curr.value.replace(/^\n|\n$/g, '');
                         curr.disabled = true;
 
                         newestAddition = {value: curr.value, space: curr.rows};
@@ -107,7 +109,8 @@ document.addEventListener('keyup', (e) => {
             }
             else{
                 ipcRenderer.send('cannot-interpret');
-                curr.value = curr.value.trim()
+                //Replace leading and trailing NEWLINES ONLY.
+                curr.value = curr.value.replace(/^\n|\n$/g, '');
                 curr.rows = 1;
             }
         }

@@ -106,7 +106,6 @@ ipcMain.on('history-update', (e, update) => {
         history.shift();
     }
     history.push(update);
-    console.log(history.length);
 });
 
 /*Error for invalid interpreter.*/
