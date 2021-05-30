@@ -31,7 +31,7 @@ document.addEventListener('keyup', (e) => {
                     pointer = 0;
                     pointToEdit = {'0' : {value: '', space: 1}};
 
-                    py.stdin.write(curr.value);
+                    py.stdin.write(curr.value + '\n');
 
                     function executeInput() {
 
@@ -163,6 +163,10 @@ document.addEventListener('keydown', (e) => {
 
             curr.value = curr.value.substring(0, head) + "\t" + curr.
             value.substring(tail);
+        }
+
+        if(e.keyCode == 13){
+            e.preventDefault();
         }
     }
 });
