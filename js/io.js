@@ -27,37 +27,46 @@ document.addEventListener('keyup', (e) => {
         if(e.keyCode == 13){
 
             if(proceed){
-                if(true){
-                    pointer = 0;
-                    pointToEdit = {'0' : {value: '', space: 1}};
+                pointer = 0;
+                pointToEdit = {'0' : {value: '', space: 1}};
+                let inside = false;
 
-                    py.stdin.write(curr.value + '\n');
+                py.stdin.write(curr.value + '\n');
 
-                    function executeInput() {
+                function executeInput() {
 
-                        /*Delay the normal execution of a key press of
-                        Enter key so that the execution of child process
-                        can occur.*/
-                        return new Promise((resolve) => {
-
-                            py.stdout.once("data", (data) => {
-                                resolve(['valid', data.toString()]);
-                            });
-
-                            py.stderr.once("data", (data) => {
-                                resolve(['invalid', data.toString().
-                                replace('>>>', '')]);
-                            });
+                    /*Delay the normal execution of a key press of
+                    Enter key so that the execution of child process
+                    can occur.*/
+                    return new Promise((resolve) => {
+                        py.stdout.once("data", (data) => {
+                            resolve(['valid', data.toString()]);
                         });
 
+                        py.stderr.once("data", (data) => {
+                            if(data.toString() === '... '){
+                                inside = true;
+                            }
+                            console.log(inside);
+
+                            resolve(['invalid', data.toString().
+                            replace('>>>', '')]);
+                        });
+                    });
+
+                }
+
+                /*Wait until the stdout or stderr has been received from the
+                python console. Depending on that, customize and provide the
+                output (or lack thereof).*/
+                async function restart(){
+
+                    let outType = await executeInput();
+
+                    if(inside){
+                        curr.rows++;
                     }
-
-                    /*Wait until the stdout or stderr has been received from the
-                    python console. Depending on that, customize and provide the
-                    output (or lack thereof).*/
-                    async function restart(){
-
-                        let outType = await executeInput();
+                    else{
 
                         function stderrDealer(){
                             if(outType[0] === 'valid'){
@@ -101,13 +110,9 @@ document.addEventListener('keyup', (e) => {
 
                         newSlot();
                     }
-
-                    restart();
-
                 }
-                else{
-                    curr.rows++;
-                }
+
+                restart();
             }
             else{
                 ipcRenderer.send('cannot-interpret');
