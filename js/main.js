@@ -69,10 +69,10 @@ function createWindow () {
   }
 ]
 
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 
-  win.loadFile('index.html')
+  win.loadFile(path.join(__dirname, '../html/index.html'));
 }
 
 /*read currently available persisten storage and pass
