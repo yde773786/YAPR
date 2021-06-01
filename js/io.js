@@ -9,6 +9,7 @@ var pointer = 0;
 var pointToEdit = {'0' : {value: '', space: 1}};
 var py;
 var proceed;
+var inside = false;
 
 /* When window opens, have one textarea ready for input. */
 window.addEventListener('DOMContentLoaded', () => {
@@ -30,9 +31,13 @@ document.addEventListener('keyup', (e) => {
             if(proceed){
                 pointer = 0;
                 pointToEdit = {'0' : {value: '', space: 1}};
-                let inside = false;
 
-                py.stdin.write(curr.value + '\n');
+                // If continuation block, get the last input in curr.
+                // Otherwise just the current value in curr.
+                py.stdin.write( inside === true ? curr.value
+                    .split(/\r?\n/).pop() + '\n' : curr.value + '\n');
+                    
+                inside = false;
 
                 function executeInput() {
 
@@ -67,7 +72,6 @@ document.addEventListener('keyup', (e) => {
                         indent.nextLine(curr);
                     }
                     else{
-
                         function stderrDealer(){
                             if(outType[0] === 'valid'){
                                 return false;
