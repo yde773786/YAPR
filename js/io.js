@@ -1,5 +1,6 @@
 const {ipcRenderer} = require('electron');
 const { spawn } = require('child_process');
+const indent = require('./Manipulation/indent.js');
 
 var historyInput = [];
 var curr = null;
@@ -47,7 +48,6 @@ document.addEventListener('keyup', (e) => {
                             if(data.toString() === '... '){
                                 inside = true;
                             }
-                            console.log(inside);
 
                             resolve(['invalid', data.toString().
                             replace('>>>', '')]);
@@ -64,7 +64,7 @@ document.addEventListener('keyup', (e) => {
                     let outType = await executeInput();
 
                     if(inside){
-                        curr.rows++;
+                        indent.nextLine(curr);
                     }
                     else{
 
