@@ -32,46 +32,33 @@ document.addEventListener('keyup', (e) => {
                 pointer = 0;
                 pointToEdit = {'0' : {value: '', space: 1}};
 
-                // If continuation block, get the last input in curr.
-                // Otherwise just the current value in curr.
-                py.stdin.write( inside === true ? curr.value
-                    .split(/\r?\n/).pop() + '\n' : curr.value + '\n');
-                    
-                inside = false;
+                let currStr = (curr.value).split('\n');
+                let i = 0;
 
-                function executeInput() {
+                async function evaluation(){
 
-                    /*Delay the normal execution of a key press of
-                    Enter key so that the execution of child process
-                    can occur.*/
-                    return new Promise((resolve) => {
-                        py.stdout.once("data", (data) => {
-                            resolve(['valid', data.toString()]);
-                        });
+                    //Take in input and deal with it one at a time
+                    for(i = 0; i < currStr.length - 1; i++){
+                        // If continuation block, get the last input in curr.
+                        // Otherwise just the current value in curr.
 
-                        py.stderr.once("data", (data) => {
-                            if(data.toString() === '... '){
-                                inside = true;
-                            }
-
-                            resolve(['invalid', data.toString().
-                            replace('>>>', '')]);
-                        });
-                    });
-
-                }
-
-                /*Wait until the stdout or stderr has been received from the
-                python console. Depending on that, customize and provide the
-                output (or lack thereof).*/
-                async function restart(){
-
-                    let outType = await executeInput();
-
+                        //Only concerned with single lined input and handling
+                        //the stdout and stderr associated with it.
+                        console.log(currStr[i] + '\n');
+                         py.stdin.write(currStr[i] + '\n');
+                         hi = await executeInput(currStr[i]);
+                         console.log(hi);
+                    }
+                    console.log(currStr[i] + '\n');
+                    //Deals with the final result
+                     py.stdin.write(currStr[i] + '\n');
+                    outType = await executeInput(currStr[i] + '\n');
+                    console.log(outType);
                     if(inside){
                         indent.nextLine(curr);
                     }
                     else{
+
                         function stderrDealer(){
                             if(outType[0] === 'valid'){
                                 return false;
@@ -105,7 +92,6 @@ document.addEventListener('keyup', (e) => {
                         }
 
                         //Replace leading and trailing NEWLINES ONLY.
-                        curr.value = curr.value.replace(/^\n|\n$/g, '');
                         curr.disabled = true;
 
                         newestAddition = {value: curr.value, space: curr.rows};
@@ -116,12 +102,11 @@ document.addEventListener('keyup', (e) => {
                     }
                 }
 
-                restart();
+                evaluation();
             }
             else{
                 ipcRenderer.send('cannot-interpret');
                 //Replace leading and trailing NEWLINES ONLY.
-                curr.value = curr.value.replace(/^\n|\n$/g, '');
                 curr.rows = 1;
             }
         }
@@ -270,4 +255,31 @@ function newSlot() {
 
     cell2.appendChild(input);
     input.focus();
+}
+
+function executeInput() {
+
+    /*Delay the normal execution of a key press of
+    Enter key so that the execution of child process
+    can occur.*/
+    return new Promise((resolve) => {
+        inside = false;
+
+        py.stdout.once("data", (data) => {
+            resolve(['valid', data.toString()]);
+        });
+
+        py.stderr.once("data", (data) => {
+            if(data.toString() === '... '){
+                inside = true;
+                resolve(['invalid', data.toString()]);
+            }
+            else if(!data.includes('>>>')){
+                resolve(['invalid', data.toString()]);
+            }
+        //     console.log(data.toString());
+        //     resolve(['invalid', data.toString().
+        //     replace('>>>', '')]);
+        });
+    });
 }
