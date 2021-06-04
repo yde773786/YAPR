@@ -45,6 +45,7 @@ document.addEventListener('keyup', (e) => {
                         //Only concerned with single lined input and handling
                         //the stdout and stderr associated with it.
                         console.log(currStr[i] + '\n');
+                        console.log(py);
                          py.stdin.write(currStr[i] + '\n');
                          hi = await executeInput(currStr[i]);
                          console.log(hi);
@@ -184,14 +185,16 @@ ipcRenderer.on('interpreter', (event, data) =>{
     }
 
     if(info.innerHTML != "No Valid Interpreter Selected"){
-        py = spawn(data.pt, ["-i"]);
+
+        py = spawn('pystderr.sh');
 
         /*Send in dummy input for initial version stderr removal*/
-        py.stdin.write('dummy\n');
+        // console.log(py);
+        // py.stdin.write('dummy\n');
 
         function dummyPromise() {
             return new Promise(function(resolve) {
-                py.stderr.once("data", (data) => {
+                py.stdout.once("data", (data) => {
                     resolve();
                 });
             });
@@ -276,6 +279,9 @@ function executeInput() {
             }
             else if(!data.includes('>>>')){
                 resolve(['invalid', data.toString()]);
+            }
+            else{
+                console.log('hooo');
             }
         //     console.log(data.toString());
         //     resolve(['invalid', data.toString().
