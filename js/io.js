@@ -10,6 +10,7 @@ var pointToEdit = {'0' : {value: '', space: 1}};
 var py;
 var proceed;
 var inside = false;
+var totalData = '';
 
 /* When window opens, have one textarea ready for input. */
 window.addEventListener('DOMContentLoaded', () => {
@@ -43,35 +44,21 @@ document.addEventListener('keyup', (e) => {
                         // Otherwise just the current value in curr.
 
                         //Only concerned with single lined input and handling
-                        //the stdout and stderr associated with it.
-                        console.log(currStr[i] + '\n');
-                        console.log(py);
+                        //the stdout associated with it.
                          py.stdin.write(currStr[i] + '\n');
                          hi = await executeInput(currStr[i]);
-                         console.log(hi);
                     }
-                    console.log(currStr[i] + '\n');
+                    py.stdout.removeAllListeners(['data']);
                     //Deals with the final result
                      py.stdin.write(currStr[i] + '\n');
                     outType = await executeInput(currStr[i] + '\n');
-                    console.log(outType);
+
                     if(inside){
                         indent.nextLine(curr);
                     }
                     else{
 
-                        function stderrDealer(){
-                            if(outType[0] === 'valid'){
-                                return false;
-                            }
-                            else if(outType[1].toLowerCase().includes('error')){
-                                return true;
-                            }
-
-                            return false;
-                        }
-
-                        if(outType[0] === 'valid' || stderrDealer()){
+                        if(outType.isWritten){
                             let table = document.getElementById('interior');
                             let row = table.insertRow(cnt++);
 
@@ -79,16 +66,17 @@ document.addEventListener('keyup', (e) => {
                             cell.colSpan = 2;
 
                             let output = document.createElement('P');
-                            let strOut = outType[1];
+                            let strOut = outType.msg;
 
                             output.style.whiteSpace = "pre-wrap";
 
-                            if(outType[0] === 'valid'){
-                                output.innerHTML = strOut.fontcolor("white");
-                            }
-                            else{
+                            if(outType.isError){
                                 output.innerHTML = strOut.fontcolor("red");
                             }
+                            else{
+                                output.innerHTML = strOut.fontcolor("white");
+                            }
+
                             cell.appendChild(output);
                         }
 
@@ -100,6 +88,7 @@ document.addEventListener('keyup', (e) => {
                         historyInput.push(newestAddition);
 
                         newSlot();
+                        totalData = '';
                     }
                 }
 
@@ -188,10 +177,6 @@ ipcRenderer.on('interpreter', (event, data) =>{
 
         py = spawn('pystderr.sh');
 
-        /*Send in dummy input for initial version stderr removal*/
-        // console.log(py);
-        // py.stdin.write('dummy\n');
-
         function dummyPromise() {
             return new Promise(function(resolve) {
                 py.stdout.once("data", (data) => {
@@ -268,24 +253,28 @@ function executeInput() {
     return new Promise((resolve) => {
         inside = false;
 
-        py.stdout.once("data", (data) => {
-            resolve(['valid', data.toString()]);
+        py.stdout.on("data", (data) => {
+
+            data = data.toString();
+            totalData += data;
+
+            function customLastIndexOf(mainStr, subStr){
+                return mainStr.trim().substring(mainStr.length - 4) == subStr ?
+                mainStr.length - 4 : -1;
+            }
+
+            licont = customLastIndexOf(totalData, '...');
+            liarr = customLastIndexOf(totalData, '>>>');
+
+            if(!(licont == -1 && liarr == -1)){
+
+                licont > liarr ? resolve({isWritten: false,
+                                        msg:  totalData.substring(0, licont)}) :
+                                 resolve({isWritten: true, isError: true,
+                                        msg: totalData.substring(0, liarr)});
+            }
+
         });
 
-        py.stderr.once("data", (data) => {
-            if(data.toString() === '... '){
-                inside = true;
-                resolve(['invalid', data.toString()]);
-            }
-            else if(!data.includes('>>>')){
-                resolve(['invalid', data.toString()]);
-            }
-            else{
-                console.log('hooo');
-            }
-        //     console.log(data.toString());
-        //     resolve(['invalid', data.toString().
-        //     replace('>>>', '')]);
-        });
     });
 }
