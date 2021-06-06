@@ -1,5 +1,6 @@
 const {ipcRenderer} = require('electron');
 const { spawn } = require('child_process');
+const path = require('path');
 const indent = require('./Manipulation/indent.js');
 
 var historyInput = [];
@@ -176,7 +177,7 @@ ipcRenderer.on('interpreter', (event, data) =>{
 
     if(info.innerHTML != "No Valid Interpreter Selected"){
 
-        py = spawn('pystderr.sh');
+        py = spawn(path.join(__dirname, 'pystderr.sh'));
 
         function dummyPromise() {
             return new Promise(function(resolve) {
