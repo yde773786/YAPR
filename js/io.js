@@ -46,7 +46,8 @@ document.addEventListener('keyup', (e) => {
                         //Only concerned with single lined input and handling
                         //the stdout associated with it.
                          py.stdin.write(currStr[i] + '\n');
-                         hi = await executeInput(currStr[i]);
+                         await executeInput(currStr[i]);
+
                     }
                     py.stdout.removeAllListeners(['data']);
                     //Deals with the final result
@@ -255,23 +256,38 @@ function executeInput() {
 
         py.stdout.on("data", (data) => {
 
+            let tempData = totalData;
             data = data.toString();
-            totalData += data;
+            tempData += data;
 
             function customLastIndexOf(mainStr, subStr){
-                return mainStr.trim().substring(mainStr.length - 4) == subStr ?
-                mainStr.length - 4 : -1;
+                temp = mainStr.trim();
+                return temp.substring(temp.length - 3) == subStr ?
+                temp.length - 3 : -1;
             }
 
-            licont = customLastIndexOf(totalData, '...');
-            liarr = customLastIndexOf(totalData, '>>>');
+            licont = customLastIndexOf(tempData, '...');
+            liarr = customLastIndexOf(tempData, '>>>');
 
             if(!(licont == -1 && liarr == -1)){
 
-                licont > liarr ? resolve({isWritten: false,
-                                        msg:  totalData.substring(0, licont)}) :
-                                 resolve({isWritten: true, isError: true,
-                                        msg: totalData.substring(0, liarr)});
+                let isWritten, isError, msg;
+                licont > liarr ? isWritten = false : isWritten = true;
+
+                if(isWritten){
+                    isError = false;
+                    msg = tempData.substring(0, liarr);
+
+                    if(msg.toLowerCase().includes('error')){
+                        isError = true;
+                    }
+                }
+
+                resolve({isWritten: isWritten, msg: msg, isError: isError});
+            }
+
+            if(data.trim() != '...'){
+                totalData += data;
             }
 
         });
