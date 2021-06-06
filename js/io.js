@@ -177,7 +177,7 @@ ipcRenderer.on('interpreter', (event, data) =>{
 
     if(info.innerHTML != "No Valid Interpreter Selected"){
 
-        py = spawn(path.join(__dirname, 'pystderr.sh'));
+        py = spawn(path.join(__dirname, 'pystderr.sh'), [data.pt]);
 
         function dummyPromise() {
             return new Promise(function(resolve) {
