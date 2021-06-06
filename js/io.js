@@ -31,11 +31,17 @@ document.addEventListener('keyup', (e) => {
         if(e.keyCode == 13){
 
             if(proceed){
-                pointer = 0;
-                pointToEdit = {'0' : {value: '', space: 1}};
+                let currStr = (curr.value).split('\n');;
 
-                let currStr = (curr.value).split('\n');
+                /*Interpret everything line-by-line if command from
+                history log. BUT only last line if new command.*/
+                if(pointer == 0 && inside){
+                    currStr = [currStr.pop()]
+                }
+
+                pointToEdit = {'0' : {value: '', space: 1}};
                 let i = 0;
+                pointer = 0;
 
                 async function evaluation(){
 
@@ -287,6 +293,9 @@ function executeInput() {
                     if(msg.toLowerCase().includes('error')){
                         isError = true;
                     }
+                }
+                else {
+                    inside = true;
                 }
 
                 resolve({isWritten: isWritten, msg: msg, isError: isError});
