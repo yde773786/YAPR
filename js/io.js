@@ -177,8 +177,12 @@ ipcRenderer.on('interpreter', (event, data) =>{
 
     if(info.innerHTML != "No Valid Interpreter Selected"){
 
-        py = spawn(path.join(__dirname, 'pystderr.sh'), [data.pt]);
+        /*Mac & Linux run bash file, windows runs batch file*/
+        process.platform === "win32" ?
+        py = spawn(path.join(__dirname, 'pystderr.bat'), [data.pt])
+        : py = spawn(path.join(__dirname, 'pystderr.sh'), [data.pt]);
 
+        /*Remove unneeded verion information (from stderr)*/
         function dummyPromise() {
             return new Promise(function(resolve) {
                 py.stdout.once("data", (data) => {
@@ -261,6 +265,7 @@ function executeInput() {
             data = data.toString();
             tempData += data;
 
+            /*Recognize extraneous '>>>' or '...' (from stderr) */
             function customLastIndexOf(mainStr, subStr){
                 temp = mainStr.trim();
                 return temp.substring(temp.length - 3) == subStr ?
