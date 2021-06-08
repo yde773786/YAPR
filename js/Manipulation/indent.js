@@ -1,7 +1,7 @@
 /*Manipulation of textarea with respect to indentation*/
 var currTab = 0;
 
-const nextLine = function (curr){
+const nextLine = (curr) => {
     curr.rows++;
 
     if(curr.value.trim()[curr.value.trim().length - 1] == ':'){
@@ -19,7 +19,7 @@ const nextLine = function (curr){
     curr.value += '\n' + '\t'.repeat(currTab);
 };
 
-const resetTab = function (){
+const resetTab = () => {
     currTab = 0;
 }
 
