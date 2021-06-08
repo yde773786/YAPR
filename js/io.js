@@ -65,7 +65,8 @@ document.addEventListener('keyup', (e) => {
                         indent.nextLine(curr);
                     }
                     else{
-
+                        indent.resetTab();
+                        
                         if(outType.isWritten){
                             let table = document.getElementById('interior');
                             let row = table.insertRow(cnt++);
@@ -109,7 +110,7 @@ document.addEventListener('keyup', (e) => {
             }
         }
         else {
-            curr.rows = curr.value.split('\n').length
+            curr.rows = curr.value.split('\n').length;
             pointToEdit[pointer] = {value: curr.value, space: curr.rows};
         }
     }
