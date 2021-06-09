@@ -26,6 +26,23 @@ function createWindow () {
                       pt: pathInterpreter});
 
   const template = [
+      {
+          label: 'Navigation',
+          submenu: [
+              {
+                  label: 'Open Console',
+                  click: () => {
+                      console.log('Open Console');
+                  }
+              },
+              {
+                  label: 'Open Settings',
+                  click: () => {
+                      console.log('Open Settings');
+                  }
+              }
+          ]
+      },
   {
     label: 'Actions',
     submenu: [
