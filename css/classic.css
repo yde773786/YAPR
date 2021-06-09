@@ -22,3 +22,19 @@ body{
     width: 100%;
     border-spacing: 0 15px;
 }
+
+tr :first-child{
+    width: 5%;
+}
+
+tr :last-child{
+    width: 95%;
+}
+
+textarea{
+    color: white;
+    background: transparent;
+    width: 100%;
+    font-family: monospace;
+    overflow: hidden;
+}

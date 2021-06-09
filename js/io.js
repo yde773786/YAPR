@@ -66,7 +66,7 @@ document.addEventListener('keyup', (e) => {
                     }
                     else{
                         indent.resetTab();
-                        
+
                         if(outType.isWritten){
                             let table = document.getElementById('interior');
                             let row = table.insertRow(cnt++);
@@ -232,9 +232,6 @@ function newSlot() {
     let cell1 = row.insertCell(0);
     let cell2 = row.insertCell(1);
 
-    cell1.style.width = "5%";
-    cell2.style.width = "95%";
-
     let status = document.createElement('SPAN');
     status.innerHTML = firstElement;
     status.style.color = "white";
@@ -245,12 +242,6 @@ function newSlot() {
 
     input.rows = "1";
     input.cols = "1";
-
-    input.style.color = "white";
-    input.style.background = "transparent";
-    input.style.width = "100%"
-    input.style.fontFamily = "monospace";
-    input.style.overflow = "hidden";
 
     curr = input;
 
