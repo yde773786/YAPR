@@ -23,11 +23,11 @@ body{
     border-spacing: 0 15px;
 }
 
-tr :first-child{
+#interior tr :first-child{
     width: 5%;
 }
 
-tr :last-child{
+#interior tr :last-child{
     width: 95%;
 }
 

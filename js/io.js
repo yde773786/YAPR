@@ -2,6 +2,7 @@ const {ipcRenderer} = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
 const indent = require('./Manipulation/indent.js');
+const swap = require('./Manipulation/swap.js');
 
 var historyInput = [];
 var curr = null;
@@ -15,7 +16,9 @@ var totalData = '';
 
 /* When window opens, have one textarea ready for input. */
 window.addEventListener('DOMContentLoaded', () => {
+    swap.ioLayout();
     newSlot();
+
     var info = document.getElementById('interpreter-info');
     info.innerHTML = 'No Interpreter Selected';
     info.style.color = "white";

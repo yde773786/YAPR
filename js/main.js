@@ -32,13 +32,13 @@ function createWindow () {
               {
                   label: 'Open Console',
                   click: () => {
-                      console.log('Open Console');
+                      win.webContents.send('console');
                   }
               },
               {
                   label: 'Open Settings',
                   click: () => {
-                      console.log('Open Settings');
+                      win.webContents.send('settings');
                   }
               }
           ]
@@ -92,7 +92,7 @@ function createWindow () {
   win.loadFile(path.join(__dirname, '../html/index.html'));
 }
 
-/*read currently available persisten storage and pass
+/*read currently available persistent storage and pass
 to renderer process.*/
 app.whenReady().then(() => {
 
