@@ -95,8 +95,10 @@ document.addEventListener('keyup', (e) => {
                         newestAddition = {value: curr.value, space: curr.rows};
                         swap.consoleData.input.push(newestAddition);
 
-                        ipcRenderer.send('history-update', newestAddition);
-                        historyInput.push(newestAddition);
+                        if(newestAddition.value.trim() != ''){
+                            ipcRenderer.send('history-update', newestAddition);
+                            historyInput.push(newestAddition);
+                        }
 
                         swap.newInputSlot();
                         totalData = '';
