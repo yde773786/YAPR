@@ -5,35 +5,49 @@ const indent = require('./Manipulation/indent.js');
 const swap = require('./Manipulation/swap.js');
 
 var historyInput = [];
-var curr = null;
-var cnt = 0;
 var pointer = 0;
 var pointToEdit = {'0' : {value: '', space: 1}};
 var py;
 var proceed;
 var inside = false;
 var totalData = '';
+var isConsole = true;
 
 /* When window opens, have one textarea ready for input. */
 window.addEventListener('DOMContentLoaded', () => {
-    swap.ioLayout();
-    newSlot();
+    swap.consoleLayout();
+    swap.newSlot();
+});
 
-    var info = document.getElementById('interpreter-info');
-    info.innerHTML = 'No Interpreter Selected';
-    info.style.color = "white";
-    info.style.fontFamily = "monospace";
+ipcRenderer.on('console', () => {
+    if(!isConsole){
+        swap.consoleLayout();
+        swap.newSlot();
+        isConsole = true;
+    }
+});
+
+ipcRenderer.on('settings', () => {
+    if(isConsole){
+        swap.settingsLayout();
+        isConsole = false;
+    }
 });
 
 /*Enter key persists input as well as creates a
 new textarea for new input. Extra newlines must
 be trimmed accordingly.*/
 document.addEventListener('keyup', (e) => {
+
+    let curr = document.getElementsByTagName('TEXTAREA')
+                        [document.getElementsByTagName('TEXTAREA').length - 1];
+
     if (e.target === curr) {
-
+        console.log('khjh');
         if(e.keyCode == 13){
-
+            console.log('khjh');
             if(proceed){
+                console.log('khjh');
                 let currStr = (curr.value).split('\n');;
 
                 /*Interpret everything line-by-line if command from
@@ -72,15 +86,13 @@ document.addEventListener('keyup', (e) => {
 
                         if(outType.isWritten){
                             let table = document.getElementById('interior');
-                            let row = table.insertRow(cnt++);
+                            let row = table.insertRow(swap.cnt.val++);
 
                             let cell = row.insertCell(0);
                             cell.colSpan = 2;
 
                             let output = document.createElement('P');
                             let strOut = outType.msg;
-
-                            output.style.whiteSpace = "pre-wrap";
 
                             if(outType.isError){
                                 output.innerHTML = strOut.fontcolor("red");
@@ -89,6 +101,8 @@ document.addEventListener('keyup', (e) => {
                                 output.innerHTML = strOut.fontcolor("white");
                             }
 
+                            swap.consoleData.output.push({text: strOut,
+                            error: outType.isError});
                             cell.appendChild(output);
                         }
 
@@ -96,10 +110,12 @@ document.addEventListener('keyup', (e) => {
                         curr.disabled = true;
 
                         newestAddition = {value: curr.value, space: curr.rows};
+                        swap.consoleData.input.push(newestAddition);
+
                         ipcRenderer.send('history-update', newestAddition);
                         historyInput.push(newestAddition);
 
-                        newSlot();
+                        swap.newSlot();
                         totalData = '';
                     }
                 }
@@ -123,6 +139,10 @@ document.addEventListener('keyup', (e) => {
 the required input from history log. Also overrides
 tab default action for indentation.*/
 document.addEventListener('keydown', (e) => {
+
+    let curr = document.getElementsByTagName('TEXTAREA')
+                        [document.getElementsByTagName('TEXTAREA').length - 1];
+
     if (e.target === curr) {
 
         if(e.keyCode == 38 || e.keyCode == 40){
@@ -180,6 +200,7 @@ ipcRenderer.on('interpreter', (event, data) =>{
     else{
         info.innerHTML = "No Valid Interpreter Selected";
     }
+    swap.consoleData.infoBox = {text: info.innerHTML};
 
     if(typeof(data.hs) != 'undefined'){
         historyInput = data.hs;
@@ -221,36 +242,9 @@ ipcRenderer.on('clear', (e) => {
         table.deleteRow(0);
     }
 
-    cnt = 0;
-    newSlot();
+    swap.cnt.val = 0;
+    swap.newSlot();
 });
-
-/*Renders the next table row with required cells.*/
-function newSlot() {
-
-    let firstElement = '&gt;&gt;&gt;';
-    let table = document.getElementById('interior');
-    let row = table.insertRow(cnt++);
-
-    let cell1 = row.insertCell(0);
-    let cell2 = row.insertCell(1);
-
-    let status = document.createElement('SPAN');
-    status.innerHTML = firstElement;
-    status.style.color = "white";
-
-    cell1.appendChild(status);
-
-    let input = document.createElement('TEXTAREA');
-
-    input.rows = "1";
-    input.cols = "1";
-
-    curr = input;
-
-    cell2.appendChild(input);
-    input.focus();
-}
 
 function executeInput() {
 

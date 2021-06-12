@@ -12,6 +12,7 @@ body{
 #interpreter-info{
     font-family: monospace;
     margin-bottom: 10px;
+    color: white;
 }
 
 #container{
@@ -29,6 +30,10 @@ body{
 
 #interior tr :last-child{
     width: 95%;
+}
+
+#interior tr td p{
+    white-space: pre-wrap;
 }
 
 textarea{
