@@ -16,13 +16,13 @@ var isConsole = true;
 /* When window opens, have one textarea ready for input. */
 window.addEventListener('DOMContentLoaded', () => {
     swap.consoleLayout();
-    swap.newSlot();
+    swap.newInputSlot();
 });
 
 ipcRenderer.on('console', () => {
     if(!isConsole){
         swap.consoleLayout();
-        swap.newSlot();
+        swap.newInputSlot();
         isConsole = true;
     }
 });
@@ -43,11 +43,9 @@ document.addEventListener('keyup', (e) => {
                         [document.getElementsByTagName('TEXTAREA').length - 1];
 
     if (e.target === curr) {
-        console.log('khjh');
         if(e.keyCode == 13){
-            console.log('khjh');
+            
             if(proceed){
-                console.log('khjh');
                 let currStr = (curr.value).split('\n');;
 
                 /*Interpret everything line-by-line if command from
@@ -85,25 +83,9 @@ document.addEventListener('keyup', (e) => {
                         indent.resetTab();
 
                         if(outType.isWritten){
-                            let table = document.getElementById('interior');
-                            let row = table.insertRow(swap.cnt.val++);
-
-                            let cell = row.insertCell(0);
-                            cell.colSpan = 2;
-
-                            let output = document.createElement('P');
-                            let strOut = outType.msg;
-
-                            if(outType.isError){
-                                output.innerHTML = strOut.fontcolor("red");
-                            }
-                            else{
-                                output.innerHTML = strOut.fontcolor("white");
-                            }
-
-                            swap.consoleData.output.push({text: strOut,
-                            error: outType.isError});
-                            cell.appendChild(output);
+                            swap.newOutputSlot({msg: outType.msg, isError:
+                                                outType.isError});
+                            swap.consoleData.output.push(outType);
                         }
 
                         //Replace leading and trailing NEWLINES ONLY.
@@ -115,7 +97,7 @@ document.addEventListener('keyup', (e) => {
                         ipcRenderer.send('history-update', newestAddition);
                         historyInput.push(newestAddition);
 
-                        swap.newSlot();
+                        swap.newInputSlot();
                         totalData = '';
                     }
                 }
@@ -243,7 +225,7 @@ ipcRenderer.on('clear', (e) => {
     }
 
     swap.cnt.val = 0;
-    swap.newSlot();
+    swap.newInputSlot();
 });
 
 function executeInput() {

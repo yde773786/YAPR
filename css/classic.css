@@ -36,6 +36,10 @@ body{
     white-space: pre-wrap;
 }
 
+span{
+    color: white;
+}
+
 textarea{
     color: white;
     background: transparent;
