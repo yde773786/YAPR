@@ -30,6 +30,7 @@ ipcRenderer.on('console', () => {
 ipcRenderer.on('settings', () => {
     if(isConsole){
         swap.settingsLayout();
+        swap.cnt.val = 0;
         isConsole = false;
     }
 });
@@ -44,7 +45,7 @@ document.addEventListener('keyup', (e) => {
 
     if (e.target === curr) {
         if(e.keyCode == 13){
-            
+
             if(proceed){
                 let currStr = (curr.value).split('\n');;
 

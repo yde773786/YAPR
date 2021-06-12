@@ -13,6 +13,7 @@ const clearBody = (body) => {
 
 /*Create the layout for console*/
 const consoleLayout = () => {
+
     console.log(consoleData);
     let body = document.getElementsByTagName("BODY")[0];
     clearBody(body);
@@ -33,12 +34,18 @@ const consoleLayout = () => {
     interior.id = "interior";
     container.appendChild(interior)
 
+    for(let i = 0; i < consoleData.input.length; i++){
+        newInputSlot(consoleData.input[i]);
+        newOutputSlot(consoleData.output[i]);
+    }
+
 }
 
 /*Renders the next table row with required INPUT cells.
 newInputSlot deals with receiving new input and reloading previous
 input, depending on the paramenters.*/
 const newInputSlot = (inBox = undefined) => {
+
     let firstElement = '&gt;&gt;&gt;';
     let table = document.getElementById('interior');
     let row = table.insertRow(cnt.val++);
@@ -60,6 +67,7 @@ const newInputSlot = (inBox = undefined) => {
     }
     else{
         input.rows = inBox.space;
+        input.value = inBox.value;
         input.disabled = true;
     }
 }
@@ -68,6 +76,7 @@ const newInputSlot = (inBox = undefined) => {
 newOutputSlot deals with receiving new output and reloading previous
 output, depending on the paramenters.*/
 const newOutputSlot = (outBox) => {
+    
     let table = document.getElementById('interior');
     let row = table.insertRow(cnt.val++);
 
