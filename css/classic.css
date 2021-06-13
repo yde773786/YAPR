@@ -2,48 +2,57 @@ html{
     height: 100%;
     width: 100%;
     background: black;
+    background-color: #151b24;
 }
 
 body{
-    margin: 3%;
-    margin-left: 0.3%;
+    padding: 1%;
 }
 
 #interpreter-info{
     font-family: monospace;
-    margin-bottom: 10px;
+    top: 0;
+    position: relative;
     color: white;
+    font-size: 13pt;
 }
 
 #container{
+    margin-top: 1.5%;
+    position: relative;
     font-family: monospace;
+    font-size: 13pt;
 }
 
 #interior {
     width: 100%;
-    border-spacing: 0 15px;
+    color: white;
 }
 
 #interior tr :first-child{
-    width: 5%;
+    width: 2%;
 }
 
 #interior tr :last-child{
-    width: 95%;
+    width: 98%;
 }
 
 #interior tr td p{
     white-space: pre-wrap;
 }
 
-span{
+#interior tr td textarea{
+    background: transparent;
+    padding: 1%;
+    -webkit-border-radius: 15px;
+    width: 100%;
+    overflow: hidden;
     color: white;
+    font-size: 13pt;
 }
 
-textarea{
-    color: white;
-    background: transparent;
-    width: 100%;
-    font-family: monospace;
-    overflow: hidden;
+*:focus {
+    outline: none;
+    border:1px solid green;
+    box-shadow: 0 0 10px #719ECE;
 }

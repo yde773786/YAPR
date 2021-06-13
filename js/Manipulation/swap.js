@@ -76,7 +76,7 @@ const newInputSlot = (inBox = undefined) => {
 newOutputSlot deals with receiving new output and reloading previous
 output, depending on the paramenters.*/
 const newOutputSlot = (outBox) => {
-    
+
     let table = document.getElementById('interior');
     let row = table.insertRow(cnt.val++);
 
