@@ -14,7 +14,6 @@ const clearBody = (body) => {
 /*Create the layout for console*/
 const consoleLayout = () => {
 
-    console.log(consoleData);
     let body = document.getElementsByTagName("BODY")[0];
     clearBody(body);
 
@@ -98,7 +97,6 @@ const newOutputSlot = (outBox) => {
 
 /*Create the layout for settings*/
 const settingsLayout = () => {
-    console.log(consoleData);
     let body = document.getElementsByTagName("BODY")[0];
     clearBody(body);
 

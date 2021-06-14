@@ -49,10 +49,8 @@ document.addEventListener('keyup', (e) => {
             if(proceed){
                 let currStr = (curr.value).split('\n');;
 
-                /*Interpret everything line-by-line if command from
-                history log. BUT only last line if new command.*/
-                if(pointer == 0 && inside){
-                    currStr = [currStr.pop()]
+                if(indent.nextLine(curr)){
+                    return;
                 }
 
                 pointToEdit = {'0' : {value: '', space: 1}};
@@ -74,35 +72,29 @@ document.addEventListener('keyup', (e) => {
                     }
                     py.stdout.removeAllListeners(['data']);
                     //Deals with the final result
-                     py.stdin.write(currStr[i] + '\n');
+                    py.stdin.write(currStr[i] + '\n');
                     outType = await executeInput(currStr[i] + '\n');
 
-                    if(inside){
-                        indent.nextLine(curr);
+                    if(outType.isWritten){
+                        swap.newOutputSlot({msg: outType.msg, isError:
+                                            outType.isError});
+                        swap.consoleData.output.push(outType);
                     }
-                    else{
-                        indent.resetTab();
 
-                        if(outType.isWritten){
-                            swap.newOutputSlot({msg: outType.msg, isError:
-                                                outType.isError});
-                            swap.consoleData.output.push(outType);
-                        }
+                    //Replace leading and trailing NEWLINES ONLY.
+                    curr.disabled = true;
 
-                        //Replace leading and trailing NEWLINES ONLY.
-                        curr.disabled = true;
+                    newestAddition = {value: curr.value, space: curr.rows};
+                    swap.consoleData.input.push(newestAddition);
 
-                        newestAddition = {value: curr.value, space: curr.rows};
-                        swap.consoleData.input.push(newestAddition);
-
-                        if(newestAddition.value.trim() != ''){
-                            ipcRenderer.send('history-update', newestAddition);
-                            historyInput.push(newestAddition);
-                        }
-
-                        swap.newInputSlot();
-                        totalData = '';
+                    if(newestAddition.value.trim() != ''){
+                        ipcRenderer.send('history-update', newestAddition);
+                        historyInput.push(newestAddition);
                     }
+
+                    swap.newInputSlot();
+                    totalData = '';
+
                 }
 
                 evaluation();
@@ -239,7 +231,7 @@ function executeInput() {
     return new Promise((resolve) => {
         inside = false;
 
-        py.stdout.on("data", (data) => {
+        py.stdout.once("data", (data) => {
 
             let tempData = totalData;
             data = data.toString();
