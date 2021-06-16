@@ -1,4 +1,4 @@
-/*Transition from one windo to another (within SPA) using methods provided
+/*Transition from one window to another (within SPA) using methods provided
 here.*/
 
 var settingsData, consoleData = {infoBox: undefined, input: [], output: []};

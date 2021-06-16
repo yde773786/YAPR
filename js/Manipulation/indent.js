@@ -21,24 +21,25 @@ const nextLine = (curr) => {
     let allStr = curr.value.split('\n');
     selectStr[currIndex] = allStr[currIndex]; // Get complete string for currIndex
 
-    if(curr.selectionStart < selectStr.join('\n').trim().length - 1){
+    let tillSelectLine = selectStr.join('\n');
+
+    if(curr.selectionStart < tillSelectLine.trim().length - 1){
         return false;
     }
     let res = findTab();
 
     if(res != 0){
         allStr.splice(currIndex + 1, 0, '\t'.repeat(res));
-
     }
-    else {
-        if(currIndex == selectStr.length - 1){
-            allStr.splice(currIndex + 1, 0, '');
-            return false;
-        }
+    else if(currIndex == selectStr.length - 1) {
+        allStr.splice(currIndex + 1, 0, '');
+        return false;
     }
 
     curr.value = allStr.join('\n');
+    curr.selectionStart = curr.selectionEnd = tillSelectLine.length + res + 1;
     curr.rows++;
+
     return true;
 }
 

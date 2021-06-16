@@ -153,11 +153,11 @@ document.addEventListener('keydown', (e) => {
         if(e.keyCode == 9){
             e.preventDefault();
 
-            let head = curr.selectionStart;
-            let tail = curr.selectionEnd;
+            let head = curr.value.substring(0, curr.selectionStart);
+            let tail = curr.value.substring(curr.selectionEnd);
 
-            curr.value = curr.value.substring(0, head) + "\t" + curr.
-            value.substring(tail);
+            curr.value = head + "\t" + tail;
+            curr.selectionStart = curr.selectionEnd = head.length + 1;
         }
 
         if(e.keyCode == 13){
