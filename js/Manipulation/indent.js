@@ -4,6 +4,7 @@ const nextLine = (curr) => {
     let selectStr = curr.value.substr(0, curr.selectionStart).split('\n');
     let currIndex = selectStr.length - 1;
 
+    /*Find current indentation level.*/
     const findTab = () => {
         let currTab = 0;
 
@@ -17,8 +18,13 @@ const nextLine = (curr) => {
                                                 ':' ? currTab + 1 : currTab;
     }
 
-    let res = findTab();
     let allStr = curr.value.split('\n');
+    selectStr[currIndex] = allStr[currIndex]; // Get complete string for currIndex
+
+    if(curr.selectionStart < selectStr.join('\n').trim().length - 1){
+        return false;
+    }
+    let res = findTab();
 
     if(res != 0){
         allStr.splice(currIndex + 1, 0, '\t'.repeat(res));
