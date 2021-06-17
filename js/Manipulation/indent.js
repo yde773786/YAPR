@@ -18,6 +18,31 @@ const nextLine = (curr) => {
                                                 ':' ? currTab + 1 : currTab;
     }
 
+    /*Checks if each open bracket (not within strings) is closed with a
+    corresponding close bracket*/
+    const bracketComplete = () => {
+
+        let inQuotes = false;
+        let bracketOpen = {'{': 0, '[': 0};
+        let associateClose = {'}': '{', ']': '['};
+
+        for(let i = 0; i < curr.value.length; i++){
+
+            if(curr.value[i] == '"' || curr.value[i] == "'"){
+                inQuotes = !inQuotes;
+            }
+            else if ((curr.value[i] == '{' || curr.value[i] == '[') && !inQuotes) {
+                bracketOpen[curr.value[i]]++;
+            }
+            else if((curr.value[i] == '}' || curr.value[i] == ']') && !inQuotes){
+                bracketOpen[associateClose[curr.value[i]]]--;
+            }
+
+        }
+
+        return bracketOpen['{'] <= 0 && bracketOpen['['] <= 0;
+    }
+
     let allStr = curr.value.split('\n');
     selectStr[currIndex] = allStr[currIndex]; // Get complete string for currIndex
 
@@ -32,8 +57,12 @@ const nextLine = (curr) => {
         allStr.splice(currIndex + 1, 0, '\t'.repeat(res));
     }
     else if(currIndex == selectStr.length - 1) {
-        allStr.splice(currIndex + 1, 0, '');
-        return false;
+        if(bracketComplete()){
+            return false;
+        }
+        else{
+            allStr.splice(currIndex + 1, 0, '');
+        }
     }
 
     curr.value = allStr.join('\n');
