@@ -123,31 +123,39 @@ document.addEventListener('keydown', (e) => {
     if (e.target === curr) {
 
         if(e.keyCode == 38 || e.keyCode == 40){
-            e.preventDefault();
+            let currLine = curr.value.substr(0, curr.selectionStart).split('\n').length;
 
-            let currDisp = curr.value;
-            let currRows = curr.rows;
-            let temp = pointer;
+            /*Override Default action only if Up/Down key is not pressed in middle
+            of input block*/
+            if((currLine == 1 && e.keyCode == 38) || (currLine ==
+                curr.value.split('\n').length && e.keyCode == 40)){
 
-            if(e.keyCode == 38 && pointer != historyInput.length){
-                pointer++;
+                    e.preventDefault();
+
+                    let currDisp = curr.value;
+                    let currRows = curr.rows;
+                    let temp = pointer;
+
+                    if(e.keyCode == 38 && pointer != historyInput.length){
+                        pointer++;
+                    }
+                    else if(e.keyCode == 40 && pointer != 0){
+                        pointer--;
+                    }
+
+                    if(typeof(pointToEdit[pointer]) != 'undefined'){
+                        currDisp = pointToEdit[pointer].value;
+                        currRows = pointToEdit[pointer].space;
+                    }
+                    else if(temp != pointer) {
+                        currDisp = historyInput[historyInput.length - pointer].value;
+                        currRows = historyInput[historyInput.length - pointer].space;
+                    }
+
+                    curr.value = currDisp;
+                    curr.rows = currRows;
+
             }
-            else if(e.keyCode == 40 && pointer != 0){
-                pointer--;
-            }
-
-            if(typeof(pointToEdit[pointer]) != 'undefined'){
-                currDisp = pointToEdit[pointer].value;
-                currRows = pointToEdit[pointer].space;
-            }
-            else if(temp != pointer) {
-                currDisp = historyInput[historyInput.length - pointer].value;
-                currRows = historyInput[historyInput.length - pointer].space;
-            }
-
-            curr.value = currDisp;
-            curr.rows = currRows;
-
         }
 
         if(e.keyCode == 9){
