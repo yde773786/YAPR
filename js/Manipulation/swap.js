@@ -100,7 +100,7 @@ const settingsLayout = () => {
     let body = document.getElementsByTagName("BODY")[0];
     clearBody(body);
 
-
+    
 }
 
 module.exports = {

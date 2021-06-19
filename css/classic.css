@@ -57,3 +57,84 @@ body{
     border:1px solid green;
     box-shadow: 0 0 10px #719ECE;
 }
+
+hr {
+    border-color: white;
+    width: 90%;
+    margin-left: 0;
+    margin-top: 0;
+}
+
+h1{
+    color: white;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 3em;
+    margin-bottom: 0.5%;
+}
+
+.options{
+    margin-top: 1%;
+    color: white;
+    font-family: monospace;
+    font-size: 2em;
+}
+
+.options input, select {
+    margin-top: 1%;
+    border-radius: 10px;
+    color: white;
+    width: 30%;
+    margin-left: 0;
+    padding: 1%;
+    font-size: 0.5em;
+    background-color: #222d3d;
+    display: block;
+}
+
+.options input[type=checkbox]{
+    height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+input[type=checkbox] + label {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 75px;
+	height: 40px;
+	background: grey;
+	display: block;
+	border-radius: 100px;
+	position: relative;
+}
+
+input[type=checkbox] + label:after {
+	content: '';
+	position: absolute;
+	top: 0px;
+	left: 2px;
+	width: 40px;
+	height: 40px;
+	background: #fff;
+	border-radius: 90px;
+	transition: 0.5s;
+}
+
+input:checked + label {
+	background: #bada55;
+}
+
+input:checked + label:after {
+	left: calc(100% - 2px);
+	transform: translateX(-100%);
+}
+
+label:active:after {
+	width: 130px;
+}
+
+
+.options input:focus, select:focus {
+     outline: none;
+}
