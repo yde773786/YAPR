@@ -6,9 +6,7 @@ var cnt = {val: 0};
 
 /*Clear the body*/
 const clearBody = (body) => {
-    while(body.firstChild){
-        body.removeChild(body.lastChild);
-    }
+    body.innerHTML = '';
 }
 
 /*Create the layout for console*/
@@ -25,11 +23,11 @@ const consoleLayout = () => {
         intInfo.innerHTML = consoleData.infoBox.text;
     }
 
-    let container = document.createElement('DIV')
+    let container = document.createElement('DIV');
     container.id = "container";
     body.appendChild(container);
 
-    let interior = document.createElement('TABLE')
+    let interior = document.createElement('TABLE');
     interior.id = "interior";
     container.appendChild(interior)
 
@@ -97,10 +95,52 @@ const newOutputSlot = (outBox) => {
 
 /*Create the layout for settings*/
 const settingsLayout = () => {
+
     let body = document.getElementsByTagName("BODY")[0];
     clearBody(body);
 
-    
+    body.innerHTML = '<h1>History Limit</h1>\
+        <hr>\
+        <div class="options">\
+            <label for="history-limit">Number of commands that are stored\
+            in history.</label>\
+            <select id="history-limit">\
+                <option value="small">250</option>\
+                <option value="medium">500</option>\
+                <option value="large">1000</option>\
+            </select>\
+        </div>\
+        \
+        <h1>Themes</h1>\
+        <hr>\
+        <div class="options">\
+            <label for="themes">General appearence of the python console.</label>\
+            <select id="themes">\
+                <option value="styled-dark">Styled Dark</option>\
+                <option value="styled-light">Styled Light</option>\
+                <option value="classic">Classic</option>\
+            </select>\
+        </div>\
+        \
+        <h1>Error Description</h1>\
+        <hr>\
+        <div class="options">\
+            <label for="switch">Filter out standard error for human readability</label>\
+            <input type="checkbox" id="switch" checked="true"/>\
+            <label for="switch"></label>\
+        </div>\
+        \
+        <h1>Text Font</h1>\
+        <hr>\
+        <div class="options">\
+            <label for="text-font">Font size of I/O in console.</label>\
+            <select id="text-font">\
+                <option value="small">Small</option>\
+                <option value="medium">Medium</option>\
+                <option value="large">Large</option>\
+            </select>\
+        </div>';
+
 }
 
 module.exports = {
