@@ -13,8 +13,8 @@ var storePath = path.join(app.getPath('userData'), 'store.json');
 change interpreter.*/
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
-    height: 400,
+    width: 1000,
+    height: 500,
     webPreferences: {
       preload: path.join(__dirname, 'io.js')
     }

@@ -132,7 +132,7 @@ const settingsLayout = () => {
         \
         <h1>Text Font</h1>\
         <hr>\
-        <div class="options">\
+        <div class="options final-setting">\
             <label for="text-font">Font size of I/O in console.</label>\
             <select id="text-font">\
                 <option value="small">Small</option>\

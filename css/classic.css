@@ -138,3 +138,20 @@ label:active:after {
 .options input:focus, select:focus {
      outline: none;
 }
+
+body::-webkit-scrollbar {
+  width: 5px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #151b24;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 20px;
+}
+
+.final-setting{
+    margin-bottom: 3%;
+}
