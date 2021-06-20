@@ -69,7 +69,7 @@ h1{
     color: white;
     font-family: monospace;
     font-weight: bold;
-    font-size: 3em;
+    font-size: 2em;
     margin-bottom: 0.5%;
 }
 
@@ -77,7 +77,7 @@ h1{
     margin-top: 1%;
     color: white;
     font-family: monospace;
-    font-size: 2em;
+    font-size: 1.25em;
 }
 
 .options input, select {
@@ -87,7 +87,7 @@ h1{
     width: 30%;
     margin-left: 0;
     padding: 1%;
-    font-size: 0.5em;
+    font-size: 0.75em;
     background-color: #222d3d;
     display: block;
 }
@@ -122,7 +122,7 @@ input[type=checkbox] + label:after {
 }
 
 input:checked + label {
-	background: #bada55;
+	background: #719ECE;
 }
 
 input:checked + label:after {

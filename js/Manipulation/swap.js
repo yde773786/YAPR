@@ -1,7 +1,9 @@
 /*Transition from one window to another (within SPA) using methods provided
 here.*/
 
-var settingsData, consoleData = {infoBox: undefined, input: [], output: []};
+var settingsData = {historyLimit: 'medium', theme: 'styled-dark', errorDesc:
+                    true, font: 'medium'};
+var consoleData = {infoBox: undefined, input: [], output: []};
 var cnt = {val: 0};
 
 /*Clear the body*/
@@ -55,6 +57,7 @@ const newInputSlot = (inBox = undefined) => {
     cell1.appendChild(status);
 
     let input = document.createElement('TEXTAREA');
+    input.autoComplete = "on";
     cell2.appendChild(input);
     input.cols = 1;
 
@@ -141,8 +144,13 @@ const settingsLayout = () => {
             </select>\
         </div>';
 
+        document.getElementById('history-limit').value = settingsData.historyLimit;
+        document.getElementById('themes').value = settingsData.theme;
+        document.getElementById('switch').checked = settingsData.errorDesc;
+        document.getElementById('text-font').value = settingsData.font;
 }
 
 module.exports = {
-    consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt
+    consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt,
+    settingsData
 }
