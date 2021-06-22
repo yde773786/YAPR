@@ -21,6 +21,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 ipcRenderer.on('console', () => {
     if(!isConsole){
+        swap.setSettings();
         swap.consoleLayout();
         swap.newInputSlot();
         isConsole = true;

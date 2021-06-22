@@ -13,7 +13,7 @@ const clearBody = (body) => {
 
 /*Create the layout for console*/
 const consoleLayout = () => {
-
+    
     let body = document.getElementsByTagName("BODY")[0];
     clearBody(body);
 
@@ -144,13 +144,24 @@ const settingsLayout = () => {
             </select>\
         </div>';
 
-        document.getElementById('history-limit').value = settingsData.historyLimit;
-        document.getElementById('themes').value = settingsData.theme;
-        document.getElementById('switch').checked = settingsData.errorDesc;
-        document.getElementById('text-font').value = settingsData.font;
+        getSettings();
+}
+
+const getSettings = () => {
+    document.getElementById('history-limit').value = settingsData.historyLimit;
+    document.getElementById('themes').value = settingsData.theme;
+    document.getElementById('switch').checked = settingsData.errorDesc;
+    document.getElementById('text-font').value = settingsData.font;
+}
+
+const setSettings = () => {
+    settingsData.historyLimit = document.getElementById('history-limit').value;
+    settingsData.theme = document.getElementById('themes').value;
+    settingsData.errorDesc = document.getElementById('switch').checked;
+    settingsData.font = document.getElementById('text-font').value
 }
 
 module.exports = {
     consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt,
-    settingsData
+    setSettings
 }
