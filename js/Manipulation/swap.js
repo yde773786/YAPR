@@ -13,7 +13,7 @@ const clearBody = (body) => {
 
 /*Create the layout for console*/
 const consoleLayout = () => {
-    
+
     let body = document.getElementsByTagName("BODY")[0];
     clearBody(body);
 
@@ -107,7 +107,7 @@ const settingsLayout = () => {
         <div class="options">\
             <label for="history-limit">Number of commands that are stored\
             in history.</label>\
-            <select id="history-limit">\
+            <select id="history-limit" onchange="historyLimit()">\
                 <option value="small">250</option>\
                 <option value="medium">500</option>\
                 <option value="large">1000</option>\
@@ -163,5 +163,5 @@ const setSettings = () => {
 
 module.exports = {
     consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt,
-    setSettings
+    setSettings, settingsData
 }

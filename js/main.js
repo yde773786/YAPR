@@ -8,6 +8,7 @@ var pathInterpreter;
 var versionInterpreter;
 var history = [];
 var storePath = path.join(app.getPath('userData'), 'store.json');
+var settingsSaved = {};
 
 /*Creates window with custom menu. Provide ability to
 change interpreter.*/
@@ -23,7 +24,9 @@ function createWindow () {
   win.webContents.send('interpreter',
                       {pi: versionInterpreter,
                       hs: history,
-                      pt: pathInterpreter});
+                      pt: pathInterpreter,
+                      settingsSaved: settingsSaved
+                      });
 
   const template = [
       {
@@ -101,6 +104,7 @@ app.whenReady().then(() => {
       pathInterpreter = storedVal.path;
       versionInterpreter = storedVal.version;
       history = storedVal.history;
+      settingsSaved = storedVal.settingsSaved;
   } catch (err){
       pathInterpreter = 'No Interpreter';
       versionInterpreter = '';
@@ -125,6 +129,11 @@ ipcMain.on('history-update', (e, update) => {
     history.push(update);
 });
 
+/*Save updated settings*/
+ipcMain.on('console-save', (e, settingsData) =>{
+    settingsSaved = settingsData;
+})
+
 /*Error for invalid interpreter.*/
 ipcMain.on('cannot-interpret', (e) => {
     dialog.showErrorBox('Cannot Execute', "Cannot execute program as" +
@@ -138,7 +147,8 @@ app.on('window-all-closed', () => {
     fs.writeFileSync(storePath, JSON.stringify(
         {path: pathInterpreter,
         version: versionInterpreter,
-        history: history}
+        history: history,
+        settingsSaved: settingsSaved}
     ));
 
     if (process.platform !== 'darwin') {

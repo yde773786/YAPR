@@ -20,15 +20,18 @@ window.addEventListener('DOMContentLoaded', () => {
     swap.newInputSlot();
 });
 
+/*Save settings and pass it on to main for persistence.
+Open console after that.*/
 ipcRenderer.on('console', () => {
     if(!isConsole){
-        swap.setSettings();
-        swap.consoleLayout();
+        swap.consoleLayout(swap.consoleData);
         swap.newInputSlot();
         isConsole = true;
+        ipcRenderer.send('console-save', swap.settingsData);
     }
 });
 
+/*Open settings*/
 ipcRenderer.on('settings', () => {
     if(isConsole){
         swap.settingsLayout();
@@ -36,6 +39,11 @@ ipcRenderer.on('settings', () => {
         isConsole = false;
     }
 });
+
+/** ***********************************************************************
+                                CONSOLE
+    ***********************************************************************
+*/
 
 /*Enter key persists input as well as creates a
 new textarea for new input. Extra newlines must
@@ -187,8 +195,10 @@ ipcRenderer.on('interpreter', (event, data) =>{
     }
     swap.consoleData.infoBox = {text: piStr};
 
+    /*settingsSaved and hs are either both undefined or both containing value*/
     if(typeof(data.hs) != 'undefined'){
         historyInput = data.hs;
+        Object.assign(swap.settingsData, data.settingsSaved)
     }
 
     if(piStr != "No Valid Interpreter Selected"){
@@ -284,4 +294,14 @@ function executeInput() {
         });
 
     });
+}
+
+
+/** ***********************************************************************
+                                SETTINGS
+    ***********************************************************************
+*/
+
+function historyLimit() {
+    console.log('Clicked me!');
 }
