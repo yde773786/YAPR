@@ -12,6 +12,7 @@ var proceed;
 var inside = false;
 var totalData = '';
 var isConsole = true;
+var piStr;
 
 /* When window opens, have one textarea ready for input. */
 window.addEventListener('DOMContentLoaded', () => {
@@ -178,22 +179,19 @@ document.addEventListener('keydown', (e) => {
 /*Check if interpreter input is valid. If so, proceed.
 Else, give a warning to enter valid interpreter.*/
 ipcRenderer.on('interpreter', (event, data) =>{
-    var info = document.getElementById('interpreter-info');
-
     if(data.pi.toLowerCase().includes("python")){
-        info.innerHTML = data.pi;
+        piStr = data.pi;
     }
     else{
-        info.innerHTML = "No Valid Interpreter Selected";
+        piStr = "No Valid Interpreter Selected";
     }
-    swap.consoleData.infoBox = {text: info.innerHTML};
+    swap.consoleData.infoBox = {text: piStr};
 
     if(typeof(data.hs) != 'undefined'){
         historyInput = data.hs;
     }
 
-    if(info.innerHTML != "No Valid Interpreter Selected"){
-
+    if(piStr != "No Valid Interpreter Selected"){
         /*Mac & Linux run bash file, windows runs batch file*/
         process.platform === "win32" ?
         py = spawn(path.join(__dirname, 'pystderr.bat'), [data.pt])
@@ -219,6 +217,9 @@ ipcRenderer.on('interpreter', (event, data) =>{
         proceed = false;
     }
 
+    if(isConsole){
+        document.getElementById('interpreter-info').innerHTML = piStr;
+    }
 });
 
 /*Clears the console.*/
