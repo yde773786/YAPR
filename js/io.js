@@ -27,7 +27,6 @@ ipcRenderer.on('console', () => {
         swap.consoleLayout(swap.consoleData);
         swap.newInputSlot();
         isConsole = true;
-        ipcRenderer.send('console-save', swap.settingsData);
     }
 });
 
@@ -184,6 +183,11 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+/** ***********************************************************************
+                                PROCESSES
+    ***********************************************************************
+*/
+
 /*Check if interpreter input is valid. If so, proceed.
 Else, give a warning to enter valid interpreter.*/
 ipcRenderer.on('interpreter', (event, data) =>{
@@ -302,6 +306,44 @@ function executeInput() {
     ***********************************************************************
 */
 
-function historyLimit() {
-    console.log('Clicked me!');
-}
+/*Calls the Listener for the respective settings element when a value has
+changed. Also update the settings data after the required action is complete.*/
+document.addEventListener('change', (e) => {
+
+    function textFontListener(){
+        console.log('text-font');
+    }
+
+    function historyLimitListener(){
+        console.log('history-limit');
+    }
+
+    function themeListener(){
+        console.log('themes');
+    }
+
+    function switchListener(){
+        console.log('switch');
+    }
+
+    switch (e.target.id) {
+        case 'history-limit':
+            swap.settingsData.historyLimit = document.getElementById('history-limit').value;
+            historyLimitListener();
+            break;
+        case 'themes':
+            swap.settingsData.theme = document.getElementById('themes').value;
+            themeListener();
+            break;
+        case 'switch':
+            swap.settingsData.errorDesc = document.getElementById('switch').checked;
+            switchListener();
+            break;
+        case 'text-font':
+            swap.settingsData.font = document.getElementById('text-font').value;
+            textFontListener();
+            break;
+    }
+
+    ipcRenderer.send('console-save', swap.settingsData);
+});

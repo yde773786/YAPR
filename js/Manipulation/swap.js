@@ -107,7 +107,7 @@ const settingsLayout = () => {
         <div class="options">\
             <label for="history-limit">Number of commands that are stored\
             in history.</label>\
-            <select id="history-limit" onchange="historyLimit()">\
+            <select id="history-limit">\
                 <option value="small">250</option>\
                 <option value="medium">500</option>\
                 <option value="large">1000</option>\
@@ -154,14 +154,7 @@ const getSettings = () => {
     document.getElementById('text-font').value = settingsData.font;
 }
 
-const setSettings = () => {
-    settingsData.historyLimit = document.getElementById('history-limit').value;
-    settingsData.theme = document.getElementById('themes').value;
-    settingsData.errorDesc = document.getElementById('switch').checked;
-    settingsData.font = document.getElementById('text-font').value
-}
-
 module.exports = {
     consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt,
-    setSettings, settingsData
+     settingsData
 }
