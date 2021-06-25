@@ -108,9 +108,9 @@ const settingsLayout = () => {
             <label for="history-limit">Number of commands that are stored\
             in history.</label>\
             <select id="history-limit">\
-                <option value="small">250</option>\
-                <option value="medium">500</option>\
-                <option value="large">1000</option>\
+                <option value="250">250</option>\
+                <option value="500">500</option>\
+                <option value="1000">1000</option>\
             </select>\
         </div>\
         \

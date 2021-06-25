@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const utils = require('./Utils/utils.js')
 const exec = require('child_process').exec;
 const LIMITER = 1000;
 
@@ -120,13 +121,10 @@ app.whenReady().then(() => {
   })
 })
 
-/*Register new input for persistence. If length
+/*Register new input for persistence if provided. If length
 of history exceeds limit, pop out earliest entries.*/
 ipcMain.on('history-update', (e, update) => {
-    if(history.length == LIMITER){
-        history.shift();
-    }
-    history.push(update);
+    utils.historyUpdate(history, settingsSaved.historyLimit, update);
 });
 
 /*Save updated settings*/

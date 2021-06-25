@@ -1,6 +1,7 @@
 const {ipcRenderer} = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
+const utils = require('./Utils/utils.js')
 const indent = require('./Manipulation/indent.js');
 const swap = require('./Manipulation/swap.js');
 
@@ -33,6 +34,7 @@ ipcRenderer.on('console', () => {
 /*Open settings*/
 ipcRenderer.on('settings', () => {
     if(isConsole){
+        pointer = 0;
         swap.settingsLayout();
         swap.cnt.val = 0;
         isConsole = false;
@@ -98,7 +100,7 @@ document.addEventListener('keyup', (e) => {
 
                     if(newestAddition.value.trim() != ''){
                         ipcRenderer.send('history-update', newestAddition);
-                        historyInput.push(newestAddition);
+                        utils.historyUpdate(historyInput, swap.settingsData.historyLimit, newestAddition);
                     }
 
                     swap.newInputSlot();
@@ -315,7 +317,8 @@ document.addEventListener('change', (e) => {
     }
 
     function historyLimitListener(){
-        console.log('history-limit');
+        utils.historyUpdate(historyInput, swap.settingsData.historyLimit);
+        ipcRenderer.send('history-update');
     }
 
     function themeListener(){
