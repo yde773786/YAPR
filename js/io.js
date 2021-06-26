@@ -321,12 +321,12 @@ document.addEventListener('change', (e) => {
         ipcRenderer.send('history-update');
     }
 
-    function themeListener(){
+    function themeSwitchListener(){
         console.log('themes');
     }
 
-    function switchListener(){
-        console.log('switch');
+    function errorSwitchListener(){
+        console.log('error');
     }
 
     switch (e.target.id) {
@@ -334,13 +334,13 @@ document.addEventListener('change', (e) => {
             swap.settingsData.historyLimit = document.getElementById('history-limit').value;
             historyLimitListener();
             break;
-        case 'themes':
-            swap.settingsData.theme = document.getElementById('themes').value;
-            themeListener();
+        case 'theme-switch':
+            swap.settingsData.theme = document.getElementById('theme-switch').checked;
+            themeSwitchListener();
             break;
-        case 'switch':
-            swap.settingsData.errorDesc = document.getElementById('switch').checked;
-            switchListener();
+        case 'err-switch':
+            swap.settingsData.errorDesc = document.getElementById('err-switch').checked;
+            errorSwitchListener();
             break;
         case 'text-font':
             swap.settingsData.font = document.getElementById('text-font').value;

@@ -1,7 +1,7 @@
 /*Transition from one window to another (within SPA) using methods provided
 here.*/
 
-var settingsData = {historyLimit: 'medium', theme: 'styled-dark', errorDesc:
+var settingsData = {historyLimit: 'medium', dark: true, errorDesc:
                     true, font: 'medium'};
 var consoleData = {infoBox: undefined, input: [], output: []};
 var cnt = {val: 0};
@@ -114,23 +114,20 @@ const settingsLayout = () => {
             </select>\
         </div>\
         \
-        <h1>Themes</h1>\
+        <h1>Dark Mode</h1>\
         <hr>\
         <div class="options">\
-            <label for="themes">General appearence of the python console.</label>\
-            <select id="themes">\
-                <option value="styled-dark">Styled Dark</option>\
-                <option value="styled-light">Styled Light</option>\
-                <option value="classic">Classic</option>\
-            </select>\
+            <label for="theme-switch">Give the console appearence a darker theme.</label>\
+            <input type="checkbox" id="theme-switch" checked="true"/>\
+            <label for="theme-switch"></label>\
         </div>\
         \
         <h1>Error Description</h1>\
         <hr>\
         <div class="options">\
-            <label for="switch">Filter out standard error for human readability</label>\
-            <input type="checkbox" id="switch" checked="true"/>\
-            <label for="switch"></label>\
+            <label for="err-switch">Filter out standard error for human readability.</label>\
+            <input type="checkbox" id="err-switch" checked="true"/>\
+            <label for="err-switch"></label>\
         </div>\
         \
         <h1>Text Font</h1>\
@@ -149,8 +146,8 @@ const settingsLayout = () => {
 
 const getSettings = () => {
     document.getElementById('history-limit').value = settingsData.historyLimit;
-    document.getElementById('themes').value = settingsData.theme;
-    document.getElementById('switch').checked = settingsData.errorDesc;
+    document.getElementById('theme-switch').checked = settingsData.theme;
+    document.getElementById('err-switch').checked = settingsData.errorDesc;
     document.getElementById('text-font').value = settingsData.font;
 }
 
