@@ -1,8 +1,6 @@
 html{
     height: 100%;
     width: 100%;
-    background: black;
-    background-color: #151b24;
 }
 
 body{
@@ -13,7 +11,6 @@ body{
     font-family: monospace;
     top: 0;
     position: relative;
-    color: white;
     font-size: 13pt;
 }
 
@@ -26,7 +23,6 @@ body{
 
 #interior {
     width: 100%;
-    color: white;
 }
 
 #interior tr :first-child{
@@ -42,13 +38,11 @@ body{
 }
 
 #interior tr td textarea{
-    background: transparent;
     padding: 1%;
     margin-left: 1%;
     -webkit-border-radius: 15px;
     width: 100%;
     overflow: hidden;
-    color: white;
     font-size: 13pt;
 }
 
@@ -59,14 +53,12 @@ body{
 }
 
 hr {
-    border-color: white;
     width: 90%;
     margin-left: 0;
     margin-top: 0;
 }
 
 h1{
-    color: white;
     font-family: monospace;
     font-weight: bold;
     font-size: 2em;
@@ -75,7 +67,6 @@ h1{
 
 .options{
     margin-top: 1%;
-    color: white;
     font-family: monospace;
     font-size: 1.25em;
 }
@@ -83,12 +74,10 @@ h1{
 .options input, select {
     margin-top: 1%;
     border-radius: 10px;
-    color: white;
     width: 30%;
     margin-left: 0;
     padding: 1%;
     font-size: 0.75em;
-    background-color: #222d3d;
     display: block;
 }
 
@@ -103,7 +92,7 @@ input[type=checkbox] + label {
 	text-indent: -9999px;
 	width: 75px;
 	height: 40px;
-	background: grey;
+	background: #b9bdba;
 	display: block;
 	border-radius: 100px;
 	position: relative;
@@ -113,11 +102,11 @@ input[type=checkbox] + label:after {
 	content: '';
 	position: absolute;
 	top: 0px;
-	left: 2px;
+	left: 0px;
 	width: 40px;
 	height: 40px;
-	background: #fff;
 	border-radius: 90px;
+    background-color: #000;
 	transition: 0.5s;
 }
 
@@ -126,14 +115,13 @@ input:checked + label {
 }
 
 input:checked + label:after {
-	left: calc(100% - 2px);
+	left: calc(100%);
 	transform: translateX(-100%);
 }
 
 label:active:after {
 	width: 130px;
 }
-
 
 .options input:focus, select:focus {
      outline: none;
@@ -154,4 +142,24 @@ body::-webkit-scrollbar-thumb {
 
 .final-setting{
     margin-bottom: 3%;
+}
+
+.white-back{
+    color: black;
+    background-color: #ffffff;
+}
+
+.white-fore{
+    color: black;
+    background-color: #ebe9e4;
+}
+
+.black-back{
+    color: white;
+    background-color: #151b24;
+}
+
+.black-fore{
+    color: white;
+    background-color: #222d3d
 }

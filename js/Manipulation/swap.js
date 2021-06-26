@@ -1,7 +1,7 @@
 /*Transition from one window to another (within SPA) using methods provided
 here.*/
 
-var settingsData = {historyLimit: 'medium', dark: true, errorDesc:
+var settingsData = {historyLimit: 'medium', dark: false, errorDesc:
                     true, font: 'medium'};
 var consoleData = {infoBox: undefined, input: [], output: []};
 var cnt = {val: 0};
@@ -38,6 +38,7 @@ const consoleLayout = () => {
         newOutputSlot(consoleData.output[i]);
     }
 
+    adjustTheme();
 }
 
 /*Renders the next table row with required INPUT cells.
@@ -70,6 +71,8 @@ const newInputSlot = (inBox = undefined) => {
         input.value = inBox.value;
         input.disabled = true;
     }
+
+    settingsData.dark ? input.classList.add('black-fore') : input.classList.add('white-fore');
 }
 
 /*Renders the next table row with required OUTPUT cells.
@@ -98,7 +101,6 @@ const newOutputSlot = (outBox) => {
 
 /*Create the layout for settings*/
 const settingsLayout = () => {
-
     let body = document.getElementsByTagName("BODY")[0];
     clearBody(body);
 
@@ -141,17 +143,31 @@ const settingsLayout = () => {
             </select>\
         </div>';
 
+        adjustTheme();
         getSettings();
 }
 
+/*Fix the thematic coloring for consoleLayout and settingsLayout*/
+const adjustTheme = () => {
+
+    settingsData.dark ? document.getElementsByTagName('HTML')[0].className = "black-back"
+                       : document.getElementsByTagName('HTML')[0].className = "white-back";
+
+    Array.prototype.slice.call(document.getElementsByTagName('SELECT')).forEach((select) => {
+        settingsData.dark ? select.className = 'black-fore' : select.className = 'white-fore';
+    });
+
+}
+
+
 const getSettings = () => {
     document.getElementById('history-limit').value = settingsData.historyLimit;
-    document.getElementById('theme-switch').checked = settingsData.theme;
+    document.getElementById('theme-switch').checked = settingsData.dark;
     document.getElementById('err-switch').checked = settingsData.errorDesc;
     document.getElementById('text-font').value = settingsData.font;
 }
 
 module.exports = {
     consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt,
-     settingsData
+     settingsData, adjustTheme
 }

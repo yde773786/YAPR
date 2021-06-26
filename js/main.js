@@ -3,8 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const utils = require('./Utils/utils.js')
 const exec = require('child_process').exec;
-const LIMITER = 1000;
-
 var pathInterpreter;
 var versionInterpreter;
 var history = [];

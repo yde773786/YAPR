@@ -15,17 +15,11 @@ var totalData = '';
 var isConsole = true;
 var piStr;
 
-/* When window opens, have one textarea ready for input. */
-window.addEventListener('DOMContentLoaded', () => {
-    swap.consoleLayout();
-    swap.newInputSlot();
-});
-
 /*Save settings and pass it on to main for persistence.
 Open console after that.*/
 ipcRenderer.on('console', () => {
     if(!isConsole){
-        swap.consoleLayout(swap.consoleData);
+        swap.consoleLayout();
         swap.newInputSlot();
         isConsole = true;
     }
@@ -204,7 +198,12 @@ ipcRenderer.on('interpreter', (event, data) =>{
     /*settingsSaved and hs are either both undefined or both containing value*/
     if(typeof(data.hs) != 'undefined'){
         historyInput = data.hs;
-        Object.assign(swap.settingsData, data.settingsSaved)
+        Object.assign(swap.settingsData, data.settingsSaved);
+
+        //Since DOM content will almost certainly be loaded before the Interpreter
+        //signal, this can be done.
+        swap.consoleLayout();
+        swap.newInputSlot();
     }
 
     if(piStr != "No Valid Interpreter Selected"){
@@ -313,37 +312,35 @@ changed. Also update the settings data after the required action is complete.*/
 document.addEventListener('change', (e) => {
 
     function textFontListener(){
-        console.log('text-font');
+        swap.settingsData.font = document.getElementById('text-font').value;
     }
 
     function historyLimitListener(){
+        swap.settingsData.historyLimit = document.getElementById('history-limit').value;
         utils.historyUpdate(historyInput, swap.settingsData.historyLimit);
         ipcRenderer.send('history-update');
     }
 
     function themeSwitchListener(){
-        console.log('themes');
+        swap.settingsData.dark = document.getElementById('theme-switch').checked;
+        swap.adjustTheme();
     }
 
     function errorSwitchListener(){
-        console.log('error');
+        swap.settingsData.errorDesc = document.getElementById('err-switch').checked;
     }
 
     switch (e.target.id) {
         case 'history-limit':
-            swap.settingsData.historyLimit = document.getElementById('history-limit').value;
             historyLimitListener();
             break;
         case 'theme-switch':
-            swap.settingsData.theme = document.getElementById('theme-switch').checked;
             themeSwitchListener();
             break;
         case 'err-switch':
-            swap.settingsData.errorDesc = document.getElementById('err-switch').checked;
             errorSwitchListener();
             break;
         case 'text-font':
-            swap.settingsData.font = document.getElementById('text-font').value;
             textFontListener();
             break;
     }
