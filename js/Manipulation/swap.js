@@ -72,7 +72,7 @@ const newInputSlot = (inBox = undefined) => {
         input.disabled = true;
     }
 
-    settingsData.dark ? input.classList.add('black-fore') : input.classList.add('white-fore');
+    settingsData.dark ? input.className = 'black-fore' : input.className = 'white-fore';
 }
 
 /*Renders the next table row with required OUTPUT cells.
@@ -93,7 +93,7 @@ const newOutputSlot = (outBox) => {
         output.innerHTML = strOut.fontcolor("red");
     }
     else{
-        output.innerHTML = strOut.fontcolor("white");
+        output.innerHTML = settingsData.dark ? strOut.fontcolor("white") : strOut.fontcolor("black");
     }
 
     cell.appendChild(output);
