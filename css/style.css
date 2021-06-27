@@ -11,14 +11,12 @@ body{
     font-family: monospace;
     top: 0;
     position: relative;
-    font-size: 13pt;
 }
 
 #container{
     margin-top: 1.5%;
     position: relative;
     font-family: monospace;
-    font-size: 13pt;
 }
 
 #interior {
@@ -43,7 +41,6 @@ body{
     -webkit-border-radius: 15px;
     width: 100%;
     overflow: hidden;
-    font-size: 13pt;
 }
 
 *:focus {
@@ -162,4 +159,40 @@ body::-webkit-scrollbar-thumb {
 .black-fore{
     color: white;
     background-color: #222d3d
+}
+
+.console-small{
+    font-size:  10pt;
+}
+
+.console-medium{
+    font-size:  13pt;
+}
+
+.console-large{
+    font-size:  16pt;
+}
+
+.h1-small{
+    font-size:  1.75em;
+}
+
+.h1-medium{
+    font-size:  2em;
+}
+
+.h1-large{
+    font-size:  2.25em;
+}
+
+.options-small{
+    font-size:  1em;
+}
+
+.options-medium{
+    font-size:  1.25em;
+}
+
+.options-large{
+    font-size:  1.5em;
 }

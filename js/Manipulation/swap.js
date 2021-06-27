@@ -38,6 +38,9 @@ const consoleLayout = () => {
         newOutputSlot(consoleData.output[i]);
     }
 
+    intInfo.className = 'console-' + settingsData.font;
+    container.className = 'console-' + settingsData.font;
+
     adjustTheme();
 }
 
@@ -72,7 +75,9 @@ const newInputSlot = (inBox = undefined) => {
         input.disabled = true;
     }
 
-    settingsData.dark ? input.className = 'black-fore' : input.className = 'white-fore';
+    input.classList.remove('black-fore', 'white-fore');
+    settingsData.dark ? input.classList.add('black-fore', 'console-' + settingsData.font) :
+                        input.classList.add('white-fore', 'console-' + settingsData.font);
 }
 
 /*Renders the next table row with required OUTPUT cells.
@@ -144,17 +149,33 @@ const settingsLayout = () => {
         </div>';
 
         adjustTheme();
+        adjustFont();
         getSettings();
 }
 
-/*Fix the thematic coloring for consoleLayout and settingsLayout*/
+/*Fix the thematic coloring for HTML and settingsLayout*/
 const adjustTheme = () => {
 
     settingsData.dark ? document.getElementsByTagName('HTML')[0].className = "black-back"
                        : document.getElementsByTagName('HTML')[0].className = "white-back";
 
     Array.prototype.slice.call(document.getElementsByTagName('SELECT')).forEach((select) => {
-        settingsData.dark ? select.className = 'black-fore' : select.className = 'white-fore';
+        select.classList.remove('black-fore', 'white-fore');
+        settingsData.dark ? select.classList.add('black-fore') : select.classList.add('white-fore');
+    });
+
+}
+
+/*Fix the font size for settingsLayout*/
+const adjustFont = () => {
+
+    Array.prototype.slice.call(document.getElementsByClassName('options')).forEach((option) => {
+        option.classList.remove('options-small', 'options-medium', 'options-large');
+        option.classList.add('options-' + settingsData.font);
+    });
+
+    Array.prototype.slice.call(document.getElementsByTagName('h1')).forEach((option) => {
+        option.className = 'h1-' + settingsData.font;
     });
 
 }
@@ -169,5 +190,5 @@ const getSettings = () => {
 
 module.exports = {
     consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt,
-     settingsData, adjustTheme
+     settingsData, adjustTheme, adjustFont
 }

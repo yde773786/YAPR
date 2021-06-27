@@ -318,6 +318,7 @@ document.addEventListener('change', (e) => {
 
     function textFontListener(){
         swap.settingsData.font = document.getElementById('text-font').value;
+        swap.adjustFont();
     }
 
     function historyLimitListener(){
