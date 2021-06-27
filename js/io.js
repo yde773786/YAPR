@@ -80,11 +80,16 @@ document.addEventListener('keyup', (e) => {
                     py.stdin.write(currStr[i] + '\n');
                     outType = await executeInput(currStr[i] + '\n');
 
-                    if(outType.isWritten){
-                        swap.newOutputSlot({msg: outType.msg, isError:
-                                            outType.isError});
-                        swap.consoleData.output.push(outType);
+                    if(!outType.isWritten){
+                        outType.msg = "YAPR error: Newline expected at end of input command.";
+                        outType.isError = true;
+
+                        /*Flush out stdin for custom YAPR error*/
+                        py.stdin.write('dummy\n');
                     }
+
+                    swap.newOutputSlot({msg: outType.msg, isError: outType.isError});
+                    swap.consoleData.output.push(outType);
 
                     //Replace leading and trailing NEWLINES ONLY.
                     curr.disabled = true;
