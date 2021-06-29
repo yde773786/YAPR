@@ -14,8 +14,7 @@ const nextLine = (curr) => {
             i++;
         }
 
-        return selectStr[currIndex].trim()[selectStr[currIndex].trim().length - 1] ==
-                                                ':' ? currTab + 1 : currTab;
+        return selectStr[currIndex].trim()[selectStr[currIndex].trim().length - 1] == ':' ? currTab + 1 : currTab;
     }
 
     /*Checks if each open bracket (not within strings) is closed with a
@@ -23,45 +22,48 @@ const nextLine = (curr) => {
     const bracketComplete = () => {
 
         let inQuotes = false;
-        let bracketOpen = {'{': 0, '[': 0};
-        let associateClose = {'}': '{', ']': '['};
+        let bracketOpen = {'{': 0, '[': 0, '(': 0};
+        let associateClose = {'}': '{', ']': '[', ')': '('};
 
-        for(let i = 0; i < curr.value.length; i++){
+        for(let i = 0; i < curr.selectionStart; i++){
 
             if(curr.value[i] == '"' || curr.value[i] == "'"){
                 inQuotes = !inQuotes;
             }
-            else if ((curr.value[i] == '{' || curr.value[i] == '[') && !inQuotes) {
+            else if ((curr.value[i] == '{' || curr.value[i] == '[' || curr.value[i] == '(') && !inQuotes) {
                 bracketOpen[curr.value[i]]++;
             }
-            else if((curr.value[i] == '}' || curr.value[i] == ']') && !inQuotes){
+            else if((curr.value[i] == '}' || curr.value[i] == ']' || curr.value[i] == ')') && !inQuotes){
                 bracketOpen[associateClose[curr.value[i]]]--;
             }
 
         }
 
-        return bracketOpen['{'] <= 0 && bracketOpen['['] <= 0;
+        return bracketOpen['{'] <= 0 && bracketOpen['['] <= 0 && bracketOpen['('] <= 0;
+    }
+
+    /*Checks if the newline was entered in the middle of a token*/
+    const notInToken = () => {
+        return true;
     }
 
     let allStr = curr.value.split('\n');
     selectStr[currIndex] = allStr[currIndex]; // Get complete string for currIndex
 
     let tillSelectLine = selectStr.join('\n');
-
-    if(curr.selectionStart < tillSelectLine.trim().length - 1){
-        return false;
-    }
     let res = findTab();
 
     if(res != 0){
         allStr.splice(currIndex + 1, 0, '\t'.repeat(res));
     }
-    else if(currIndex == selectStr.length - 1) {
-        if(bracketComplete()){
+    else {
+        if(bracketComplete() && notInToken()){
             return false;
         }
         else{
-            allStr.splice(currIndex + 1, 0, '');
+            let remaining = allStr[currIndex].substring(curr.selectionStart);
+            allStr[currIndex] = allStr[currIndex].substring(0, curr.selectionStart);
+            allStr.splice(currIndex + 1, 0, remaining);
         }
     }
 

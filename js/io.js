@@ -261,7 +261,7 @@ function executeInput() {
     return new Promise((resolve) => {
         inside = false;
 
-        py.stdout.once("data", (data) => {
+        py.stdout.on("data", (data) => {
 
             let tempData = totalData;
             data = data.toString();
