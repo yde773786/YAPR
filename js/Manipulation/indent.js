@@ -42,11 +42,6 @@ const nextLine = (curr) => {
         return bracketOpen['{'] <= 0 && bracketOpen['['] <= 0 && bracketOpen['('] <= 0;
     }
 
-    /*Checks if the newline was entered in the middle of a token*/
-    const notInToken = () => {
-        return true;
-    }
-
     let allStr = curr.value.split('\n');
     selectStr[currIndex] = allStr[currIndex]; // Get complete string for currIndex
 
@@ -57,7 +52,7 @@ const nextLine = (curr) => {
         allStr.splice(currIndex + 1, 0, '\t'.repeat(res));
     }
     else {
-        if(bracketComplete() && notInToken()){
+        if(bracketComplete()){
             return false;
         }
         else{

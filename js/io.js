@@ -72,13 +72,13 @@ document.addEventListener('keyup', (e) => {
                         //Only concerned with single lined input and handling
                         //the stdout associated with it.
                          py.stdin.write(currStr[i] + '\n');
-                         await executeInput(currStr[i]);
+                         await executeInput();
 
                     }
                     py.stdout.removeAllListeners(['data']);
                     //Deals with the final result
                     py.stdin.write(currStr[i] + '\n');
-                    outType = await executeInput(currStr[i] + '\n');
+                    outType = await executeInput();
 
                     if(!outType.isWritten){
                         outType.msg = "YAPR error: Newline expected at end of input command.";
@@ -86,6 +86,7 @@ document.addEventListener('keyup', (e) => {
 
                         /*Flush out stdin for custom YAPR error*/
                         py.stdin.write('dummy\n');
+                        await executeInput();
                     }
 
                     swap.newOutputSlot({msg: outType.msg, isError: outType.isError});
