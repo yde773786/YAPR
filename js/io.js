@@ -270,26 +270,53 @@ function executeInput() {
 
             /*Recognize extraneous '>>>' or '...' (from stderr) */
             function customLastIndexOf(mainStr, subStr){
-                temp = mainStr.trim();
-                return temp.substring(temp.length - 3) == subStr ?
-                temp.length - 3 : -1;
+                return mainStr.substring(mainStr.length - 3) == subStr ?
+                mainStr.length - 3 : -1;
             }
 
+            /* Also return if error is present or not. Only modify the output
+            when the error is present and if the option to provide error Description
+            is selected.*/
+            function prettifyError(tempMsg, errorIndex){
+                let i = 1, errorName = '';
+
+                while(errorIndex - i >= 0 && tempMsg[errorIndex - i] != ' '
+                        && tempMsg[errorIndex - i] != '\t'){
+                    errorName = tempMsg[errorIndex - i] + errorName;
+                    i++;
+                }
+                console.log(errorName);
+                console.log(tempMsg.substring(errorIndex));
+                return errorName + tempMsg.substring(errorIndex);
+            }
+
+            tempData = tempData.trim();
             licont = customLastIndexOf(tempData, '...');
             liarr = customLastIndexOf(tempData, '>>>');
 
             if(!(licont == -1 && liarr == -1)){
 
-                let isWritten, isError, msg;
+                let isWritten, isError = false, msg;
                 licont > liarr ? isWritten = false : isWritten = true;
 
                 if(isWritten){
-                    isError = false;
-                    msg = tempData.substring(0, liarr);
 
-                    if(msg.toLowerCase().includes('error')){
-                        isError = true;
+                    if(swap.settingsData.errorDesc){
+                        let firstArr = tempData.indexOf('>>>');
+                        let tempMsg = tempData.substring(0, firstArr);
+
+                        errorIndex = tempMsg.lastIndexOf('Error');
+                        isError = errorIndex != -1;
+
+                        if(isError){
+                            msg = prettifyError(tempMsg, errorIndex);
+                        }
                     }
+                    else{
+                        msg = tempData.substring(0, liarr);
+                        isError = msg.includes('Error');
+                    }
+
                 }
                 else {
                     inside = true;
