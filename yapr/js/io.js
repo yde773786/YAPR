@@ -193,6 +193,7 @@ document.addEventListener('keydown', (e) => {
 /*Check if interpreter input is valid. If so, proceed.
 Else, give a warning to enter valid interpreter.*/
 ipcRenderer.on('interpreter', (event, data) =>{
+
     if(data.pi.toLowerCase().includes("python")){
         piStr = data.pi;
     }
@@ -215,8 +216,8 @@ ipcRenderer.on('interpreter', (event, data) =>{
     if(piStr != "No Valid Interpreter Selected"){
         /*Mac & Linux run bash file, windows runs batch file*/
         process.platform === "win32" ?
-        py = spawn(path.join(__dirname, 'pystderr.bat'), [data.pt])
-        : py = spawn(path.join(__dirname, 'pystderr.sh'), [data.pt]);
+        py = spawn(path.join(data.pystderrPath, 'pystderr.bat'), [data.pt])
+        : py = spawn(path.join(data.pystderrPath, 'pystderr.sh'), [data.pt]);
 
         /*Remove unneeded verion information (from stderr)*/
         function dummyPromise() {

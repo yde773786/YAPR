@@ -6,7 +6,8 @@ const exec = require('child_process').exec;
 var pathInterpreter;
 var versionInterpreter;
 var history = [];
-var storePath = path.join(app.getPath('userData'), 'store.json');
+const storePath = path.join(app.getPath('userData'), 'store.json');
+const pystderrPath = app.getPath('userData');
 var settingsSaved = {};
 
 /*Creates window with custom menu. Provide ability to
@@ -24,8 +25,9 @@ function createWindow () {
                       {pi: versionInterpreter,
                       hs: history,
                       pt: pathInterpreter,
-                      settingsSaved: settingsSaved
-                      });
+                      settingsSaved: settingsSaved,
+                      pystderrPath: app.getPath('userData')
+                  });
 
   const template = [
       {
