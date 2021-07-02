@@ -17,6 +17,12 @@
         "appId": "com.electron.yapr",
         "mac": {
             "category": "public.app-category.developer-tools"
-        }
+        },
+        "extraFiles": [
+            {
+                "from": "./scripts/pystderr.sh",
+                "to": "."
+            }
+        ]
     }
 }

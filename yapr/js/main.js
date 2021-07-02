@@ -66,7 +66,8 @@ function createWindow () {
                         win.webContents.send('interpreter',
                                 {
                                     pi: versionInterpreter,
-                                    pt: pathInterpreter
+                                    pt: pathInterpreter,
+                                    pystderrPath: pystderrPath
                                 });
                     });
                 })
