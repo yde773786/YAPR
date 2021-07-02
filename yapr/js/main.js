@@ -25,8 +25,7 @@ function createWindow () {
                       {pi: versionInterpreter,
                       hs: history,
                       pt: pathInterpreter,
-                      settingsSaved: settingsSaved,
-                      pystderrPath: app.getPath('userData')
+                      settingsSaved: settingsSaved
                   });
 
   const template = [
@@ -66,8 +65,7 @@ function createWindow () {
                         win.webContents.send('interpreter',
                                 {
                                     pi: versionInterpreter,
-                                    pt: pathInterpreter,
-                                    pystderrPath: pystderrPath
+                                    pt: pathInterpreter
                                 });
                     });
                 })

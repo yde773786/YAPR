@@ -216,8 +216,8 @@ ipcRenderer.on('interpreter', (event, data) =>{
     if(piStr != "No Valid Interpreter Selected"){
         /*Mac & Linux run bash file, windows runs batch file*/
         process.platform === "win32" ?
-        py = spawn(path.join(data.pystderrPath, 'pystderr.bat'), [data.pt])
-        : py = spawn(path.join(data.pystderrPath, 'pystderr.sh'), [data.pt]);
+        py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.bat'), [data.pt])
+        : py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.sh'), [data.pt]);
 
         /*Remove unneeded verion information (from stderr)*/
         function dummyPromise() {

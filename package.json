@@ -18,11 +18,15 @@
         "mac": {
             "category": "public.app-category.developer-tools"
         },
-        "extraFiles": [
-            {
-                "from": "./scripts/pystderr.sh",
-                "to": "."
-            }
-        ]
+        "extraResources": [
+            "scripts/*"
+        ],
+        "linux":{
+            "category": "development",
+            "maintainer": "Nikhil Sreekumar <yde773786@gmail.com>",
+            "target": ["deb"],
+            "icon": "build/icon.png",
+            "synopsis": "Python tool that bridges scripting with REPL"
+        }
     }
 }
