@@ -48,17 +48,17 @@ const nextLine = (curr) => {
     let tillSelectLine = selectStr.join('\n');
     let res = findTab();
 
-    if(res != 0){
-        allStr.splice(currIndex + 1, 0, '\t'.repeat(res));
+    if(!bracketComplete()){
+        let remaining = allStr[currIndex].substring(curr.selectionStart);
+        allStr[currIndex] = allStr[currIndex].substring(0, curr.selectionStart);
+        allStr.splice(currIndex + 1, 0, remaining);
     }
-    else {
-        if(bracketComplete()){
-            return false;
+    else{
+        if(res != 0){
+            allStr.splice(currIndex + 1, 0, '\t'.repeat(res));
         }
-        else{
-            let remaining = allStr[currIndex].substring(curr.selectionStart);
-            allStr[currIndex] = allStr[currIndex].substring(0, curr.selectionStart);
-            allStr.splice(currIndex + 1, 0, remaining);
+        else {
+            return false;
         }
     }
 

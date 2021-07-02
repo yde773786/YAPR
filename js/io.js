@@ -277,17 +277,23 @@ function executeInput() {
             /* Also return if error is present or not. Only modify the output
             when the error is present and if the option to provide error Description
             is selected.*/
-            function prettifyError(tempMsg, errorIndex){
-                let i = 1, errorName = '';
+            function prettifyError(tempMsg, errorIndex, isError){
 
-                while(errorIndex - i >= 0 && tempMsg[errorIndex - i] != ' '
-                        && tempMsg[errorIndex - i] != '\t'){
-                    errorName = tempMsg[errorIndex - i] + errorName;
-                    i++;
+                if(isError){
+                    let i = 1, errorName = '';
+
+                    while(errorIndex - i >= 0 && tempMsg[errorIndex - i] != ' '
+                            && tempMsg[errorIndex - i] != '\t'){
+                        errorName = tempMsg[errorIndex - i] + errorName;
+                        i++;
+                    }
+
+                    return errorName + tempMsg.substring(errorIndex);
                 }
-                console.log(errorName);
-                console.log(tempMsg.substring(errorIndex));
-                return errorName + tempMsg.substring(errorIndex);
+                else{
+                    return tempMsg;
+                }
+
             }
 
             tempData = tempData.trim();
@@ -308,9 +314,7 @@ function executeInput() {
                         errorIndex = tempMsg.lastIndexOf('Error');
                         isError = errorIndex != -1;
 
-                        if(isError){
-                            msg = prettifyError(tempMsg, errorIndex);
-                        }
+                        msg = prettifyError(tempMsg, errorIndex, isError);
                     }
                     else{
                         msg = tempData.substring(0, liarr);
