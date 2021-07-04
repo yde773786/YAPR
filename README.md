@@ -1,6 +1,5 @@
 <div align="center"><h1 style="margin-bottom:0">YAPR</h1>
-Yet Another Python REP
-L</div>
+Yet Another Python REPL</div>
 
 <p align="center">
   <img style="margin:20px;" src="./resources/icons/256x256.png" alt="YAPR-logo" width="120px" height="120px"/>
