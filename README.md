@@ -1,9 +1,8 @@
 <div align="center"><h1 style="margin-bottom:0">YAPR</h1>
-Yet Another Python REP
-L</div>
+Yet Another Python REPL</div>
 
 <p align="center">
-  <img style="margin:20px;" src="./resources/icons/256x256.png" alt="YAPR-logo" width="120px" height="120px"/>
+  <img style="margin-top:40px; margin-bottom:30px" src="./resources/icons/256x256.png" alt="YAPR-logo" width="120px" height="120px"/>
   <br>
   <i>YAPR is a tool that enhances the utility of the python console for basic scripting.</i>
   <br>
