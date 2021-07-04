@@ -6,7 +6,7 @@
     "main": "yapr/js/main.js",
     "scripts": {
         "pack": "electron-builder --dir",
-        "dist": "electron-builder",
+        "dist": "electron-builder -l --win=portable",
         "start": "electron ."
     },
     "devDependencies": {
@@ -17,6 +17,9 @@
         "appId": "com.electron.yapr",
         "mac": {
             "category": "public.app-category.developer-tools"
+        },
+        "win": {
+            "target": ["nsis"]
         },
         "extraResources": [
             "scripts/*"
