@@ -1,3 +1,4 @@
+
 <div align="center"><h1 style="margin-bottom:0">YAPR</h1>
   <p>Yet Another Python REPL</p></div>
 
@@ -10,7 +11,7 @@
 <hr>
 
 ## Features
-<div align="center" style="margin-bottom:20px"><img src="./resources/demo/demo.gif"></div>
+https://user-images.githubusercontent.com/63968183/124460439-6f7e8300-dda0-11eb-85dd-4492ddc5bdca.mp4
 
 * Functionality of standard Python Consoles
 * Cuztomization
