@@ -10,7 +10,6 @@ var pointer = 0;
 var pointToEdit = {'0' : {value: '', space: 1}};
 var py;
 var proceed;
-var inside = false;
 var totalData = '';
 var isConsole = true;
 var piStr;
@@ -49,7 +48,7 @@ document.addEventListener('keyup', (e) => {
                         [document.getElementsByTagName('TEXTAREA').length - 1];
 
     if (e.target === curr) {
-        if(e.keyCode == 13){
+        if(e.key == 'Enter'){
 
             if(proceed){
                 let currStr = (curr.value).split('\n');;
@@ -133,13 +132,13 @@ document.addEventListener('keydown', (e) => {
 
     if (e.target === curr) {
 
-        if(e.keyCode == 38 || e.keyCode == 40){
+        if(e.key == "ArrowUp" || e.key == "ArrowDown"){
             let currLine = curr.value.substr(0, curr.selectionStart).split('\n').length;
 
             /*Override Default action only if Up/Down key is not pressed in middle
             of input block*/
-            if((currLine == 1 && e.keyCode == 38) || (currLine ==
-                curr.value.split('\n').length && e.keyCode == 40)){
+            if((currLine == 1 && e.key == "ArrowUp") || (currLine ==
+                curr.value.split('\n').length && e.key == "ArrowDown")){
 
                     e.preventDefault();
 
@@ -147,10 +146,10 @@ document.addEventListener('keydown', (e) => {
                     let currRows = curr.rows;
                     let temp = pointer;
 
-                    if(e.keyCode == 38 && pointer != historyInput.length){
+                    if(e.key == "ArrowUp" && pointer != historyInput.length){
                         pointer++;
                     }
-                    else if(e.keyCode == 40 && pointer != 0){
+                    else if(e.key == "ArrowDown" && pointer != 0){
                         pointer--;
                     }
 
@@ -169,7 +168,7 @@ document.addEventListener('keydown', (e) => {
             }
         }
 
-        if(e.keyCode == 9){
+        if(e.key == 'Tab'){
             e.preventDefault();
 
             let head = curr.value.substring(0, curr.selectionStart);
@@ -179,7 +178,7 @@ document.addEventListener('keydown', (e) => {
             curr.selectionStart = curr.selectionEnd = head.length + 1;
         }
 
-        if(e.keyCode == 13){
+        if(e.key == 'Enter'){
             e.preventDefault();
         }
     }
@@ -217,12 +216,12 @@ ipcRenderer.on('interpreter', (event, data) =>{
         /*Mac & Linux run bash file, windows runs batch file*/
         process.platform === "win32" ?
         py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.bat'), [data.pt])
-        : py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.sh'), [data.pt]);
+        : py = spawn(path.join(process.resourcesPath, '../../../../scripts/pystderr.sh'), [data.pt]);
 
         /*Remove unneeded verion information (from stderr)*/
         function dummyPromise() {
             return new Promise(function(resolve) {
-                py.stdout.once("data", (data) => {
+                py.stdout.once("data", () => {
                     resolve();
                 });
             });
@@ -245,7 +244,7 @@ ipcRenderer.on('interpreter', (event, data) =>{
 });
 
 /*Clears the console.*/
-ipcRenderer.on('clear', (e) => {
+ipcRenderer.on('clear', () => {
     let table = document.getElementById('interior');
     while(table.rows.length > 0) {
         table.deleteRow(0);
@@ -261,7 +260,6 @@ function executeInput() {
     Enter key so that the execution of child process
     can occur.*/
     return new Promise((resolve) => {
-        inside = false;
 
         py.stdout.on("data", (data) => {
 
@@ -322,9 +320,6 @@ function executeInput() {
                         isError = msg.includes('Error');
                     }
 
-                }
-                else {
-                    inside = true;
                 }
 
                 resolve({isWritten: isWritten, msg: msg, isError: isError});

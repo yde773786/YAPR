@@ -42,15 +42,36 @@ const nextLine = (curr) => {
         return bracketOpen['{'] <= 0 && bracketOpen['['] <= 0 && bracketOpen['('] <= 0;
     }
 
-    let allStr = curr.value.split('\n');
+    let allStr = [], selectionLineStart = 0, eachLine = '';
+
+    let validationCurr = curr.value + '\n';
+    //Replicate split('\n') for allStr as well as find index on current line
+    for(let i = 0; i < validationCurr.length; i++){
+        if(validationCurr[i] == '\n'){
+            allStr.push(eachLine);
+            eachLine = '';
+
+            if(i <= curr.selectionStart){
+                selectionLineStart = 0;
+            }
+        }
+        else{
+            eachLine += validationCurr[i];
+
+            if(i <= curr.selectionStart){
+                selectionLineStart++;
+            }
+        }
+    }
+
     selectStr[currIndex] = allStr[currIndex]; // Get complete string for currIndex
 
     let tillSelectLine = selectStr.join('\n');
     let res = findTab();
 
     if(!bracketComplete()){
-        let remaining = allStr[currIndex].substring(curr.selectionStart);
-        allStr[currIndex] = allStr[currIndex].substring(0, curr.selectionStart);
+        let remaining = allStr[currIndex].substring(selectionLineStart);
+        allStr[currIndex] = allStr[currIndex].substring(0, selectionLineStart);
         allStr.splice(currIndex + 1, 0, remaining);
     }
     else{

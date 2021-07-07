@@ -7,7 +7,6 @@ var pathInterpreter;
 var versionInterpreter;
 var history = [];
 const storePath = path.join(app.getPath('userData'), 'store.json');
-const pystderrPath = app.getPath('userData');
 var settingsSaved = {};
 
 /*Creates window with custom menu. Provide ability to
