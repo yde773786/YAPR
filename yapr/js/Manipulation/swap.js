@@ -1,7 +1,7 @@
 /*Transition from one window to another (within SPA) using methods provided
 here.*/
 
-var settingsData = {historyLimit: 'medium', dark: false, errorDesc:
+var settingsData = {historyLimit: '500', dark: false, errorDesc:
                     true, font: 'medium'};
 var consoleData = {infoBox: undefined, input: [], output: []};
 var cnt = {val: 0};
