@@ -250,6 +250,7 @@ ipcRenderer.on('clear', () => {
         table.deleteRow(0);
     }
 
+    swap.consoleData.input = swap.consoleData.output = [];
     swap.cnt.val = 0;
     swap.newInputSlot();
 });
