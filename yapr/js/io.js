@@ -191,7 +191,7 @@ document.addEventListener('keydown', (e) => {
 
 /*Check if interpreter input is valid. If so, proceed.
 Else, give a warning to enter valid interpreter.*/
-ipcRenderer.on('interpreter', (event, data) =>{
+ipcRenderer.on('interpreter', (_, data) =>{
 
     if(data.pi.toLowerCase().includes("python")){
         piStr = data.pi;

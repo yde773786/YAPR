@@ -53,7 +53,7 @@ function createWindow () {
              win.webContents.send('clear');
          }},
         {label: 'Choose Interpreter',
-            click: async (menuItem, browserWindow, event) => {
+            click: async () => {
                 dialog.showOpenDialog({properties: ['openFile']
             }).then(
                 (result) => {
@@ -121,17 +121,17 @@ app.whenReady().then(() => {
 
 /*Register new input for persistence if provided. If length
 of history exceeds limit, pop out earliest entries.*/
-ipcMain.on('history-update', (e, update) => {
+ipcMain.on('history-update', (_, update) => {
     utils.historyUpdate(history, settingsSaved.historyLimit, update);
 });
 
 /*Save updated settings*/
-ipcMain.on('console-save', (e, settingsData) =>{
+ipcMain.on('console-save', (_, settingsData) =>{
     settingsSaved = settingsData;
 })
 
 /*Error for invalid interpreter.*/
-ipcMain.on('cannot-interpret', (e) => {
+ipcMain.on('cannot-interpret', (_) => {
     dialog.showErrorBox('Cannot Execute', "Cannot execute program as" +
                                         " no valid Interpreter" +
                                         " is found.");
