@@ -68,23 +68,25 @@ const nextLine = (curr) => {
 
     let tillSelectLine = selectStr.join('\n');
     let res = findTab();
+    let remaining;
 
-    if(!bracketComplete()){
-        let remaining = allStr[currIndex].substring(selectionLineStart);
-        allStr[currIndex] = allStr[currIndex].substring(0, selectionLineStart);
-        allStr.splice(currIndex + 1, 0, remaining);
+    if(res == 0 && bracketComplete()){
+        return false;
     }
-    else{
-        if(res != 0){
-            allStr.splice(currIndex + 1, 0, '\t'.repeat(res));
+    else {
+        if(selectionLineStart == 0){
+            remaining = '';
         }
-        else {
-            return false;
+        else{
+            remaining = allStr[currIndex].substring(selectionLineStart - 1);
+            allStr[currIndex] = allStr[currIndex].substring(0, selectionLineStart - 1);
         }
+
+        allStr.splice(currIndex + 1, 0, '\t'.repeat(res) + remaining);
     }
 
     curr.value = allStr.join('\n');
-    curr.selectionStart = curr.selectionEnd = tillSelectLine.length + res + 1;
+    curr.selectionStart = curr.selectionEnd = tillSelectLine.length + res + 1 - remaining.length;
     curr.rows++;
 
     return true;
