@@ -216,7 +216,7 @@ ipcRenderer.on('interpreter', (_, data) =>{
         /*Mac & Linux run bash file, windows runs batch file*/
         process.platform === "win32" ?
         py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.bat'), [data.pt])
-        : py = spawn(path.join(process.resourcesPath, '../../../../scripts/pystderr.sh'), [data.pt]);
+        : py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.sh'), [data.pt]);
 
         /*Remove unneeded verion information (from stderr)*/
         function dummyPromise() {
