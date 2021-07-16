@@ -39,6 +39,16 @@ ipcRenderer.on('settings', () => {
     ***********************************************************************
 */
 
+/*Provide a context menu for a current active textarea to 'pause'/'resume' it's
+execution. */
+window.addEventListener('contextmenu', (e) => {
+    let curr = document.getElementsByTagName('TEXTAREA')
+                        [document.getElementsByTagName('TEXTAREA').length - 1];
+
+    e.preventDefault();
+    console.log(e.target == curr);
+});
+
 /*Enter key persists input as well as creates a
 new textarea for new input. Extra newlines must
 be trimmed accordingly.*/
