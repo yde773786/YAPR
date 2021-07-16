@@ -20,7 +20,7 @@ https://user-images.githubusercontent.com/63968183/124460439-6f7e8300-dda0-11eb-
 * Enlarging textarea for block-level scripting
 
 ## Releases
- Pre-release Version 0.1.0 is available. Near future versions will concern:
+ Pre-release Version 0.1.1 is available. Near future versions will concern:
 
 Issues: https://github.com/yde773786/YAPR/issues <br>
 Projects: https://github.com/yde773786/YAPR/projects
