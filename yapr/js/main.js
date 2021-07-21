@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const path = require('path');
+
 const fs = require('fs');
 const utils = require('./Utils/utils.js')
 const exec = require('child_process').exec;
@@ -8,11 +9,12 @@ var versionInterpreter;
 var history = [];
 const storePath = path.join(app.getPath('userData'), 'store.json');
 var settingsSaved = {};
+var win;
 
 /*Creates window with custom menu. Provide ability to
 change interpreter.*/
 function createWindow () {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1000,
     height: 500,
     webPreferences: {
@@ -129,6 +131,22 @@ ipcMain.on('history-update', (_, update) => {
 ipcMain.on('console-save', (_, settingsData) =>{
     settingsSaved = settingsData;
 })
+
+/*Open context menu for 'pausing'*/
+ipcMain.on('Menu', (_, isPaused) => {
+
+    const template = [
+        {
+          label: isPaused ? 'Pause Execution' : 'Resume Execution',
+          click: () => {
+            console.log("Menu Clicked");
+          }
+        }
+  ];
+
+    let menu = Menu.buildFromTemplate(template);
+    menu.popup({ window: win });
+});
 
 /*Error for invalid interpreter.*/
 ipcMain.on('cannot-interpret', (_) => {

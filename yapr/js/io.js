@@ -46,7 +46,9 @@ window.addEventListener('contextmenu', (e) => {
                         [document.getElementsByTagName('TEXTAREA').length - 1];
 
     e.preventDefault();
-    console.log(e.target == curr);
+    if(e.target == curr){
+        ipcRenderer.send("Menu", true);
+    }
 });
 
 /*Enter key persists input as well as creates a
