@@ -3,7 +3,7 @@
     "version": "0.1.1",
     "author": "Nikhil Sreekumar",
     "description": "Yet Another Python REPL",
-    "main": "yapr/js/main.js",
+    "main": "yapr/js/io/main.js",
     "scripts": {
         "pack": "electron-builder --dir",
         "dist": "electron-builder -l --win=portable",

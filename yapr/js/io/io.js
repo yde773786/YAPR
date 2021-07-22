@@ -1,9 +1,9 @@
 const {ipcRenderer} = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
-const utils = require('./Utils/utils.js')
-const indent = require('./Manipulation/indent.js');
-const swap = require('./Manipulation/swap.js');
+const utils = require('../Utils/utils.js')
+const indent = require('../Manipulation/indent.js');
+const swap = require('../Manipulation/swap.js');
 
 var historyInput = [];
 var pointer = 0;
@@ -14,6 +14,11 @@ var totalData = '';
 var isConsole = true;
 var piStr;
 
+/** ***********************************************************************
+                                CONSOLE
+    ***********************************************************************
+*/
+
 /*Save settings and pass it on to main for persistence.
 Open console after that.*/
 ipcRenderer.on('console', () => {
@@ -23,21 +28,6 @@ ipcRenderer.on('console', () => {
         isConsole = true;
     }
 });
-
-/*Open settings*/
-ipcRenderer.on('settings', () => {
-    if(isConsole){
-        pointer = 0;
-        swap.settingsLayout();
-        swap.cnt.val = 0;
-        isConsole = false;
-    }
-});
-
-/** ***********************************************************************
-                                CONSOLE
-    ***********************************************************************
-*/
 
 /*Provide a context menu for a current active textarea to 'pause'/'resume' it's
 execution. */
@@ -63,8 +53,6 @@ document.addEventListener('keyup', (e) => {
         if(e.key == 'Enter'){
 
             if(proceed){
-                let currStr = (curr.value).split('\n');;
-
                 if(indent.nextLine(curr)){
                     return;
                 }
@@ -73,53 +61,7 @@ document.addEventListener('keyup', (e) => {
                 let i = 0;
                 pointer = 0;
 
-                async function evaluation(){
-
-                    //Take in input and deal with it one at a time
-                    for(i = 0; i < currStr.length - 1; i++){
-                        // If continuation block, get the last input in curr.
-                        // Otherwise just the current value in curr.
-
-                        //Only concerned with single lined input and handling
-                        //the stdout associated with it.
-                         py.stdin.write(currStr[i] + '\n');
-                         await executeInput();
-
-                    }
-                    py.stdout.removeAllListeners(['data']);
-                    //Deals with the final result
-                    py.stdin.write(currStr[i] + '\n');
-                    outType = await executeInput();
-
-                    if(!outType.isWritten){
-                        outType.msg = "YAPR error: Newline expected at end of input command.";
-                        outType.isError = true;
-
-                        /*Flush out stdin for custom YAPR error*/
-                        py.stdin.write('dummy\n');
-                        await executeInput();
-                    }
-
-                    swap.newOutputSlot({msg: outType.msg, isError: outType.isError});
-                    swap.consoleData.output.push(outType);
-
-                    //Replace leading and trailing NEWLINES ONLY.
-                    curr.disabled = true;
-
-                    newestAddition = {value: curr.value, space: curr.rows};
-                    swap.consoleData.input.push(newestAddition);
-
-                    if(newestAddition.value.trim() != ''){
-                        ipcRenderer.send('history-update', newestAddition);
-                        utils.historyUpdate(historyInput, swap.settingsData.historyLimit, newestAddition);
-                    }
-
-                    swap.newInputSlot();
-                    totalData = '';
-
-                }
-
-                evaluation();
+                evaluation(curr);
             }
             else{
                 ipcRenderer.send('cannot-interpret');
@@ -152,7 +94,7 @@ document.addEventListener('keydown', (e) => {
             if((currLine == 1 && e.key == "ArrowUp") || (currLine ==
                 curr.value.split('\n').length && e.key == "ArrowDown")){
 
-                    e.preventDefault();
+                    e.preventDefault(curr);
 
                     let currDisp = curr.value;
                     let currRows = curr.rows;
@@ -228,7 +170,7 @@ ipcRenderer.on('interpreter', (_, data) =>{
         /*Mac & Linux run bash file, windows runs batch file*/
         process.platform === "win32" ?
         py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.bat'), [data.pt])
-        : py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.sh'), [data.pt]);
+        : py = spawn(path.join(process.resourcesPath, '../../../../scripts/pystderr.sh'), [data.pt]);
 
         /*Remove unneeded verion information (from stderr)*/
         function dummyPromise() {
@@ -347,11 +289,68 @@ function executeInput() {
     });
 }
 
+async function evaluation(curr){
+
+    let currStr = (curr.value).split('\n');
+
+    //Take in input and deal with it one at a time
+    for(i = 0; i < currStr.length - 1; i++){
+        // If continuation block, get the last input in curr.
+        // Otherwise just the current value in curr.
+
+        //Only concerned with single lined input and handling
+        //the stdout associated with it.
+         py.stdin.write(currStr[i] + '\n');
+         await executeInput();
+
+    }
+    py.stdout.removeAllListeners(['data']);
+    //Deals with the final result
+    py.stdin.write(currStr[i] + '\n');
+    outType = await executeInput();
+
+    if(!outType.isWritten){
+        outType.msg = "YAPR error: Newline expected at end of input command.";
+        outType.isError = true;
+
+        /*Flush out stdin for custom YAPR error*/
+        py.stdin.write('dummy\n');
+        await executeInput();
+    }
+
+    swap.newOutputSlot({msg: outType.msg, isError: outType.isError});
+    swap.consoleData.output.push(outType);
+
+    //Replace leading and trailing NEWLINES ONLY.
+    curr.disabled = true;
+
+    newestAddition = {value: curr.value, space: curr.rows};
+    swap.consoleData.input.push(newestAddition);
+
+    if(newestAddition.value.trim() != ''){
+        ipcRenderer.send('history-update', newestAddition);
+        utils.historyUpdate(historyInput, swap.settingsData.historyLimit, newestAddition);
+    }
+
+    swap.newInputSlot();
+    totalData = '';
+
+}
 
 /** ***********************************************************************
                                 SETTINGS
     ***********************************************************************
 */
+
+/*Open settings*/
+ipcRenderer.on('settings', () => {
+    if(isConsole){
+        pointer = 0;
+        swap.settingsLayout();
+        swap.cnt.val = 0;
+        isConsole = false;
+    }
+});
 
 /*Calls the Listener for the respective settings element when a value has
 changed. Also update the settings data after the required action is complete.*/

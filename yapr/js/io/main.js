@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const path = require('path');
 
 const fs = require('fs');
-const utils = require('./Utils/utils.js')
+const utils = require('../Utils/utils.js')
 const exec = require('child_process').exec;
 var pathInterpreter;
 var versionInterpreter;
@@ -93,7 +93,7 @@ function createWindow () {
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 
-  win.loadFile(path.join(__dirname, '../html/index.html'));
+  win.loadFile(path.join(__dirname, '../../html/index.html'));
 }
 
 /*read currently available persistent storage and pass
