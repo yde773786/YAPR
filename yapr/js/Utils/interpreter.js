@@ -1,4 +1,4 @@
-const constants = require('../Utils/constants.js');
+const constants = require('./constants.js');
 const { spawn } = require('child_process');
 const path = require('path');
 
@@ -36,9 +36,7 @@ const changeInterpreter = async (piStr, interpreterPath) => {
 };
 
 /*Responsible for the execution of al input provided.*/
-const executeInput = (isErrorDesc) => {
-
-    let totalData = '';
+const executeInput = (isErrorDesc, totalData) => {
 
     /*Delay the normal execution of a key press of
     Enter key so that the execution of child process
@@ -70,7 +68,6 @@ const executeInput = (isErrorDesc) => {
                         errorName = tempMsg[errorIndex - i] + errorName;
                         i++;
                     }
-
                     return errorName + tempMsg.substring(errorIndex);
                 }
                 else{
@@ -82,6 +79,10 @@ const executeInput = (isErrorDesc) => {
             tempData = tempData.trim();
             licont = customLastIndexOf(tempData, '...');
             liarr = customLastIndexOf(tempData, '>>>');
+
+            if(data.trim() != '...'){
+                totalData += data;
+            }
 
             if(!(licont == -1 && liarr == -1)){
 
@@ -106,11 +107,7 @@ const executeInput = (isErrorDesc) => {
 
                 }
 
-                resolve({isWritten: isWritten, msg: msg, isError: isError});
-            }
-
-            if(data.trim() != '...'){
-                totalData += data;
+                resolve({isWritten: isWritten, msg: msg, isError: isError, totalData: totalData});
             }
 
         });

@@ -2,7 +2,7 @@ const {ipcRenderer} = require('electron');
 const utils = require('../Utils/utils.js');
 const indent = require('../Manipulation/indent.js');
 const swap = require('../Manipulation/swap.js');
-const interpreter = require('./interpreter.js')
+const interpreter = require('../Utils/interpreter.js')
 var historyInput = [];
 var pointer = 0;
 var pointToEdit = {'0' : {value: '', space: 1}};
@@ -133,7 +133,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 /** ***********************************************************************
-                                INTERPRETER
+                                PROCESSES
     ***********************************************************************
 */
 
@@ -184,6 +184,7 @@ async function evaluation(curr){
 
     let currStr = (curr.value).split('\n');
     let i;
+    let totalData = '';
 
     //Take in input and deal with it one at a time
     for(i = 0; i < currStr.length - 1; i++){
@@ -193,14 +194,17 @@ async function evaluation(curr){
         //Only concerned with single lined input and handling
         //the stdout associated with it.
          interpreter.writeInput(currStr[i] + '\n');
-         await interpreter.executeInput(swap.settingsData.errorDesc);
+         totalData = (await interpreter.executeInput(swap.settingsData.errorDesc, totalData)).totalData;
 
     }
     interpreter.resetInput();
 
     //Deals with the final result
     interpreter.writeInput(currStr[i] + '\n');
-    outType = await interpreter.executeInput(swap.settingsData.errorDesc);
+
+    let bundle = await interpreter.executeInput(swap.settingsData.errorDesc, totalData);
+    let outType = {msg: bundle.msg, isError: bundle.isError, isWritten: bundle.isWritten};
+    totalData = bundle.totalData;
 
     if(!outType.isWritten){
         outType.msg = "YAPR error: Newline expected at end of input command.";
@@ -208,7 +212,7 @@ async function evaluation(curr){
 
         /*Flush out stdin for custom YAPR error*/
         interpreter.writeInput('dummy\n');
-        await interpreter.executeInput(swap.settingsData.errorDesc);
+        totalData = (await interpreter.executeInput(swap.settingsData.errorDesc, totalData)).totalData;
     }
 
     swap.newOutputSlot({msg: outType.msg, isError: outType.isError});
@@ -225,6 +229,7 @@ async function evaluation(curr){
         utils.historyUpdate(historyInput, swap.settingsData.historyLimit, newestAddition);
     }
 
+    totalData = '';
     swap.newInputSlot();
 }
 
