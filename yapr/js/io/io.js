@@ -1,25 +1,20 @@
 const {ipcRenderer} = require('electron');
-const { spawn } = require('child_process');
-const path = require('path');
-const utils = require('../Utils/utils.js')
+const utils = require('../Utils/utils.js');
 const indent = require('../Manipulation/indent.js');
 const swap = require('../Manipulation/swap.js');
-
+const interpreter = require('./interpreter.js')
 var historyInput = [];
 var pointer = 0;
 var pointToEdit = {'0' : {value: '', space: 1}};
-var py;
 var proceed;
-var totalData = '';
 var isConsole = true;
-var piStr;
 
 /** ***********************************************************************
                                 CONSOLE
     ***********************************************************************
 */
 
-/*Save settings and pass it on to main for persistence.
+/*Save settings and pass it on to main for persiswdxatence.
 Open console after that.*/
 ipcRenderer.on('console', () => {
     if(!isConsole){
@@ -58,7 +53,6 @@ document.addEventListener('keyup', (e) => {
                 }
 
                 pointToEdit = {'0' : {value: '', space: 1}};
-                let i = 0;
                 pointer = 0;
 
                 evaluation(curr);
@@ -139,13 +133,14 @@ document.addEventListener('keydown', (e) => {
 });
 
 /** ***********************************************************************
-                                PROCESSES
+                                INTERPRETER
     ***********************************************************************
 */
 
 /*Check if interpreter input is valid. If so, proceed.
 Else, give a warning to enter valid interpreter.*/
 ipcRenderer.on('interpreter', (_, data) =>{
+    let piStr = '';
 
     if(data.pi.toLowerCase().includes("python")){
         piStr = data.pi;
@@ -166,31 +161,7 @@ ipcRenderer.on('interpreter', (_, data) =>{
         swap.newInputSlot();
     }
 
-    if(piStr != "No Valid Interpreter Selected"){
-        /*Mac & Linux run bash file, windows runs batch file*/
-        process.platform === "win32" ?
-        py = spawn(path.join(process.resourcesPath, '/scripts/pystderr.bat'), [data.pt])
-        : py = spawn(path.join(process.resourcesPath, '../../../../scripts/pystderr.sh'), [data.pt]);
-
-        /*Remove unneeded verion information (from stderr)*/
-        function dummyPromise() {
-            return new Promise(function(resolve) {
-                py.stdout.once("data", () => {
-                    resolve();
-                });
-            });
-        }
-
-        async function dummyAwait(){
-            await dummyPromise();
-            proceed = true;
-        }
-
-        dummyAwait();
-    }
-    else{
-        proceed = false;
-    }
+    proceed = interpreter.changeInterpreter(piStr, data.pt);
 
     if(isConsole){
         document.getElementById('interpreter-info').innerHTML = piStr;
@@ -209,89 +180,10 @@ ipcRenderer.on('clear', () => {
     swap.newInputSlot();
 });
 
-function executeInput() {
-
-    /*Delay the normal execution of a key press of
-    Enter key so that the execution of child process
-    can occur.*/
-    return new Promise((resolve) => {
-
-        py.stdout.on("data", (data) => {
-
-            let tempData = totalData;
-            data = data.toString();
-            tempData += data;
-
-            /*Recognize extraneous '>>>' or '...' (from stderr) */
-            function customLastIndexOf(mainStr, subStr){
-                return mainStr.substring(mainStr.length - 3) == subStr ?
-                mainStr.length - 3 : -1;
-            }
-
-            /* Also return if error is present or not. Only modify the output
-            when the error is present and if the option to provide error Description
-            is selected.*/
-            function prettifyError(tempMsg, errorIndex, isError){
-
-                if(isError){
-                    let i = 1, errorName = '';
-
-                    while(errorIndex - i >= 0 && tempMsg[errorIndex - i] != ' '
-                            && tempMsg[errorIndex - i] != '\t'){
-                        errorName = tempMsg[errorIndex - i] + errorName;
-                        i++;
-                    }
-
-                    return errorName + tempMsg.substring(errorIndex);
-                }
-                else{
-                    return tempMsg;
-                }
-
-            }
-
-            tempData = tempData.trim();
-            licont = customLastIndexOf(tempData, '...');
-            liarr = customLastIndexOf(tempData, '>>>');
-
-            if(!(licont == -1 && liarr == -1)){
-
-                let isWritten, isError = false, msg;
-                licont > liarr ? isWritten = false : isWritten = true;
-
-                if(isWritten){
-
-                    if(swap.settingsData.errorDesc){
-                        let firstArr = tempData.indexOf('>>>');
-                        let tempMsg = tempData.substring(0, firstArr);
-
-                        errorIndex = tempMsg.lastIndexOf('Error');
-                        isError = errorIndex != -1;
-
-                        msg = prettifyError(tempMsg, errorIndex, isError);
-                    }
-                    else{
-                        msg = tempData.substring(0, liarr);
-                        isError = msg.includes('Error');
-                    }
-
-                }
-
-                resolve({isWritten: isWritten, msg: msg, isError: isError});
-            }
-
-            if(data.trim() != '...'){
-                totalData += data;
-            }
-
-        });
-
-    });
-}
-
 async function evaluation(curr){
 
     let currStr = (curr.value).split('\n');
+    let i;
 
     //Take in input and deal with it one at a time
     for(i = 0; i < currStr.length - 1; i++){
@@ -300,22 +192,23 @@ async function evaluation(curr){
 
         //Only concerned with single lined input and handling
         //the stdout associated with it.
-         py.stdin.write(currStr[i] + '\n');
-         await executeInput();
+         interpreter.writeInput(currStr[i] + '\n');
+         await interpreter.executeInput(swap.settingsData.errorDesc);
 
     }
-    py.stdout.removeAllListeners(['data']);
+    interpreter.resetInput();
+
     //Deals with the final result
-    py.stdin.write(currStr[i] + '\n');
-    outType = await executeInput();
+    interpreter.writeInput(currStr[i] + '\n');
+    outType = await interpreter.executeInput(swap.settingsData.errorDesc);
 
     if(!outType.isWritten){
         outType.msg = "YAPR error: Newline expected at end of input command.";
         outType.isError = true;
 
         /*Flush out stdin for custom YAPR error*/
-        py.stdin.write('dummy\n');
-        await executeInput();
+        interpreter.writeInput('dummy\n');
+        await interpreter.executeInput(swap.settingsData.errorDesc);
     }
 
     swap.newOutputSlot({msg: outType.msg, isError: outType.isError});
@@ -333,8 +226,6 @@ async function evaluation(curr){
     }
 
     swap.newInputSlot();
-    totalData = '';
-
 }
 
 /** ***********************************************************************
