@@ -1,13 +1,13 @@
 const {ipcRenderer} = require('electron');
-const utils = require('../Utils/utils.js');
+const utils = require('../Utils/miscellaneous.js');
 const indent = require('../Manipulation/indent.js');
 const swap = require('../Manipulation/swap.js');
+const settings = require('../Utils/settings.js');
 const interpreter = require('../Utils/interpreter.js')
 var historyInput = [];
 var pointer = 0;
 var pointToEdit = {'0' : {value: '', space: 1}};
 var proceed;
-var isConsole = true;
 
 /** ***********************************************************************
                                 CONSOLE
@@ -17,10 +17,10 @@ var isConsole = true;
 /*Save settings and pass it on to main for persiswdxatence.
 Open console after that.*/
 ipcRenderer.on('console', () => {
-    if(!isConsole){
+    if(!swap.misc.isConsole){
         swap.consoleLayout();
         swap.newInputSlot();
-        isConsole = true;
+        swap.misc.isConsole = true;
     }
 });
 
@@ -153,7 +153,7 @@ ipcRenderer.on('interpreter', (_, data) =>{
     /*settingsSaved and hs are either both undefined or both containing value*/
     if(typeof(data.hs) != 'undefined'){
         historyInput = data.hs;
-        Object.assign(swap.settingsData, data.settingsSaved);
+        Object.assign(settings.settingsData, data.settingsSaved);
 
         //Since DOM content will almost certainly be loaded before the Interpreter
         //signal, this can be done.
@@ -163,7 +163,7 @@ ipcRenderer.on('interpreter', (_, data) =>{
 
     proceed = interpreter.changeInterpreter(piStr, data.pt);
 
-    if(isConsole){
+    if(swap.misc.isConsole){
         document.getElementById('interpreter-info').innerHTML = piStr;
     }
 });
@@ -176,7 +176,7 @@ ipcRenderer.on('clear', () => {
     }
 
     swap.consoleData.input = swap.consoleData.output = [];
-    swap.cnt.val = 0;
+    swap.misc.cnt = 0;
     swap.newInputSlot();
 });
 
@@ -194,7 +194,7 @@ async function evaluation(curr){
         //Only concerned with single lined input and handling
         //the stdout associated with it.
          interpreter.writeInput(currStr[i] + '\n');
-         totalData = (await interpreter.executeInput(swap.settingsData.errorDesc, totalData)).totalData;
+         totalData = (await interpreter.executeInput(settings.settingsData.errorDesc, totalData)).totalData;
 
     }
     interpreter.resetInput();
@@ -202,7 +202,7 @@ async function evaluation(curr){
     //Deals with the final result
     interpreter.writeInput(currStr[i] + '\n');
 
-    let bundle = await interpreter.executeInput(swap.settingsData.errorDesc, totalData);
+    let bundle = await interpreter.executeInput(settings.settingsData.errorDesc, totalData);
     let outType = {msg: bundle.msg, isError: bundle.isError, isWritten: bundle.isWritten};
     totalData = bundle.totalData;
 
@@ -212,7 +212,7 @@ async function evaluation(curr){
 
         /*Flush out stdin for custom YAPR error*/
         interpreter.writeInput('dummy\n');
-        totalData = (await interpreter.executeInput(swap.settingsData.errorDesc, totalData)).totalData;
+        totalData = (await interpreter.executeInput(settings.settingsData.errorDesc, totalData)).totalData;
     }
 
     swap.newOutputSlot({msg: outType.msg, isError: outType.isError});
@@ -226,7 +226,7 @@ async function evaluation(curr){
 
     if(newestAddition.value.trim() != ''){
         ipcRenderer.send('history-update', newestAddition);
-        utils.historyUpdate(historyInput, swap.settingsData.historyLimit, newestAddition);
+        utils.historyUpdate(historyInput, settings.settingsData.historyLimit, newestAddition);
     }
 
     totalData = '';
@@ -240,11 +240,11 @@ async function evaluation(curr){
 
 /*Open settings*/
 ipcRenderer.on('settings', () => {
-    if(isConsole){
+    if(swap.misc.isConsole){
         pointer = 0;
         swap.settingsLayout();
-        swap.cnt.val = 0;
-        isConsole = false;
+        swap.misc.cnt = 0;
+        swap.misc.isConsole = false;
     }
 });
 
@@ -252,40 +252,20 @@ ipcRenderer.on('settings', () => {
 changed. Also update the settings data after the required action is complete.*/
 document.addEventListener('change', (e) => {
 
-    function textFontListener(){
-        swap.settingsData.font = document.getElementById('text-font').value;
-        swap.adjustFont();
-    }
-
-    function historyLimitListener(){
-        swap.settingsData.historyLimit = document.getElementById('history-limit').value;
-        utils.historyUpdate(historyInput, swap.settingsData.historyLimit);
-        ipcRenderer.send('history-update');
-    }
-
-    function themeSwitchListener(){
-        swap.settingsData.dark = document.getElementById('theme-switch').checked;
-        swap.adjustTheme();
-    }
-
-    function errorSwitchListener(){
-        swap.settingsData.errorDesc = document.getElementById('err-switch').checked;
-    }
-
     switch (e.target.id) {
         case 'history-limit':
-            historyLimitListener();
+            settings.historyLimitListener();
             break;
         case 'theme-switch':
-            themeSwitchListener();
+            settings.themeSwitchListener();
             break;
         case 'err-switch':
-            errorSwitchListener();
+            settings.errorSwitchListener();
             break;
         case 'text-font':
-            textFontListener();
+            settings.textFontListener();
             break;
     }
 
-    ipcRenderer.send('console-save', swap.settingsData);
+    ipcRenderer.send('console-save', settings.settingsData);
 });

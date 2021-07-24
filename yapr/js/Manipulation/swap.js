@@ -1,10 +1,10 @@
 /*Transition from one window to another (within SPA) using methods provided
 here.*/
 
-var settingsData = {historyLimit: '500', dark: false, errorDesc:
-                    true, font: 'medium'};
+const settings = require('../Utils/settings.js');
+
 var consoleData = {infoBox: undefined, input: [], output: []};
-var cnt = {val: 0};
+var misc = {cnt: 0, isConsole: true};
 
 /*Clear the body*/
 const clearBody = (body) => {
@@ -38,10 +38,10 @@ const consoleLayout = () => {
         newOutputSlot(consoleData.output[i]);
     }
 
-    intInfo.className = 'console-' + settingsData.font;
-    container.className = 'console-' + settingsData.font;
+    intInfo.className = 'console-' + settings.settingsData.font;
+    container.className = 'console-' + settings.settingsData.font;
 
-    adjustTheme();
+    settings.adjustTheme();
 }
 
 /*Renders the next table row with required INPUT cells.
@@ -51,7 +51,7 @@ const newInputSlot = (inBox = undefined) => {
 
     let firstElement = '&gt;&gt;&gt;';
     let table = document.getElementById('interior');
-    let row = table.insertRow(cnt.val++);
+    let row = table.insertRow(misc.cnt++);
 
     let cell1 = row.insertCell(0);
     let cell2 = row.insertCell(1);
@@ -76,8 +76,8 @@ const newInputSlot = (inBox = undefined) => {
     }
 
     input.classList.remove('black-fore', 'white-fore');
-    settingsData.dark ? input.classList.add('black-fore', 'console-' + settingsData.font) :
-                        input.classList.add('white-fore', 'console-' + settingsData.font);
+    settings.settingsData.dark ? input.classList.add('black-fore', 'console-' + settings.settingsData.font) :
+                        input.classList.add('white-fore', 'console-' + settings.settingsData.font);
 }
 
 /*Renders the next table row with required OUTPUT cells.
@@ -86,7 +86,7 @@ output, depending on the paramenters.*/
 const newOutputSlot = (outBox) => {
 
     let table = document.getElementById('interior');
-    let row = table.insertRow(cnt.val++);
+    let row = table.insertRow(misc.cnt++);
 
     let cell = row.insertCell(0);
     cell.colSpan = 2;
@@ -98,7 +98,7 @@ const newOutputSlot = (outBox) => {
         output.innerHTML = strOut.fontcolor("red");
     }
     else{
-        output.innerHTML = settingsData.dark ? strOut.fontcolor("white") : strOut.fontcolor("black");
+        output.innerHTML = settings.settingsData.dark ? strOut.fontcolor("white") : strOut.fontcolor("black");
     }
 
     cell.appendChild(output);
@@ -148,47 +148,11 @@ const settingsLayout = () => {
             </select>\
         </div>';
 
-        adjustTheme();
-        adjustFont();
-        getSettings();
-}
-
-/*Fix the thematic coloring for HTML and settingsLayout*/
-const adjustTheme = () => {
-
-    settingsData.dark ? document.getElementsByTagName('HTML')[0].className = "black-back"
-                       : document.getElementsByTagName('HTML')[0].className = "white-back";
-
-    Array.prototype.slice.call(document.getElementsByTagName('SELECT')).forEach((select) => {
-        select.classList.remove('black-fore', 'white-fore');
-        settingsData.dark ? select.classList.add('black-fore') : select.classList.add('white-fore');
-    });
-
-}
-
-/*Fix the font size for settingsLayout*/
-const adjustFont = () => {
-
-    Array.prototype.slice.call(document.getElementsByClassName('options')).forEach((option) => {
-        option.classList.remove('options-small', 'options-medium', 'options-large');
-        option.classList.add('options-' + settingsData.font);
-    });
-
-    Array.prototype.slice.call(document.getElementsByTagName('h1')).forEach((option) => {
-        option.className = 'h1-' + settingsData.font;
-    });
-
-}
-
-
-const getSettings = () => {
-    document.getElementById('history-limit').value = settingsData.historyLimit;
-    document.getElementById('theme-switch').checked = settingsData.dark;
-    document.getElementById('err-switch').checked = settingsData.errorDesc;
-    document.getElementById('text-font').value = settingsData.font;
+        settings.adjustTheme();
+        settings.adjustFont();
+        settings.getSettings();
 }
 
 module.exports = {
-    consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt,
-     settingsData, adjustTheme, adjustFont
+    consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, misc
 }
