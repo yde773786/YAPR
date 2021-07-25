@@ -1,37 +1,33 @@
 const {ipcRenderer} = require('electron');
-const utils = require('../Utils/miscellaneous.js');
-const indent = require('../Manipulation/indent.js');
 const swap = require('../Manipulation/swap.js');
+const utils = require('../Utils/miscellaneous.js');
 const settings = require('../Utils/settings.js');
+const consoles = require('../Utils/console.js');
 const interpreter = require('../Utils/interpreter.js')
-var historyInput = [];
 var pointer = 0;
-var pointToEdit = {'0' : {value: '', space: 1}};
 var proceed;
+
 
 /** ***********************************************************************
                                 CONSOLE
     ***********************************************************************
 */
 
-/*Save settings and pass it on to main for persiswdxatence.
+/*Save settings and pass it on to main for persistence.
 Open console after that.*/
 ipcRenderer.on('console', () => {
-    if(!swap.misc.isConsole){
+    if(!utils.misc.isConsole){
         swap.consoleLayout();
-        swap.newInputSlot();
-        swap.misc.isConsole = true;
+        consoles.newInputSlot();
+        utils.misc.isConsole = true;
     }
 });
 
 /*Provide a context menu for a current active textarea to 'pause'/'resume' it's
 execution. */
 window.addEventListener('contextmenu', (e) => {
-    let curr = document.getElementsByTagName('TEXTAREA')
-                        [document.getElementsByTagName('TEXTAREA').length - 1];
-
     e.preventDefault();
-    if(e.target == curr){
+    if(e.target == consoles.consoleData.curr){
         ipcRenderer.send("Menu", true);
     }
 });
@@ -41,31 +37,12 @@ new textarea for new input. Extra newlines must
 be trimmed accordingly.*/
 document.addEventListener('keyup', (e) => {
 
-    let curr = document.getElementsByTagName('TEXTAREA')
-                        [document.getElementsByTagName('TEXTAREA').length - 1];
-
-    if (e.target === curr) {
+    if (e.target === consoles.consoleData.curr) {
         if(e.key == 'Enter'){
-
-            if(proceed){
-                if(indent.nextLine(curr)){
-                    return;
-                }
-
-                pointToEdit = {'0' : {value: '', space: 1}};
-                pointer = 0;
-
-                evaluation(curr);
-            }
-            else{
-                ipcRenderer.send('cannot-interpret');
-                //Replace leading and trailing NEWLINES ONLY.
-                curr.rows = 1;
-            }
+            consoles.enterPressedListener(proceed);
         }
         else {
-            curr.rows = curr.value.split('\n').length;
-            pointToEdit[pointer] = {value: curr.value, space: curr.rows};
+            consoles.otherPressedListener();
         }
     }
 });
@@ -75,43 +52,43 @@ the required input from history log. Also overrides
 tab default action for indentation.*/
 document.addEventListener('keydown', (e) => {
 
-    let curr = document.getElementsByTagName('TEXTAREA')
-                        [document.getElementsByTagName('TEXTAREA').length - 1];
-
-    if (e.target === curr) {
+    if (e.target === consoles.consoleData.curr) {
 
         if(e.key == "ArrowUp" || e.key == "ArrowDown"){
-            let currLine = curr.value.substr(0, curr.selectionStart).split('\n').length;
+            let currLine = consoles.consoleData.curr.value.substr(0, consoles.consoleData.curr.selectionStart)
+                            .split('\n').length;
 
             /*Override Default action only if Up/Down key is not pressed in middle
             of input block*/
             if((currLine == 1 && e.key == "ArrowUp") || (currLine ==
-                curr.value.split('\n').length && e.key == "ArrowDown")){
+                consoles.consoleData.curr.value.split('\n').length && e.key == "ArrowDown")){
 
-                    e.preventDefault(curr);
+                    e.preventDefault();
 
-                    let currDisp = curr.value;
-                    let currRows = curr.rows;
+                    let currDisp = consoles.consoleData.curr.value;
+                    let currRows = consoles.consoleData.curr.rows;
                     let temp = pointer;
 
-                    if(e.key == "ArrowUp" && pointer != historyInput.length){
+                    if(e.key == "ArrowUp" && pointer != consoles.consoleData.historyInput.length){
                         pointer++;
                     }
                     else if(e.key == "ArrowDown" && pointer != 0){
                         pointer--;
                     }
 
-                    if(typeof(pointToEdit[pointer]) != 'undefined'){
-                        currDisp = pointToEdit[pointer].value;
-                        currRows = pointToEdit[pointer].space;
+                    if(typeof(consoles.consoleData.pointToEdit[pointer]) != 'undefined'){
+                        currDisp = consoles.consoleData.pointToEdit[pointer].value;
+                        currRows = consoles.consoleData.pointToEdit[pointer].space;
                     }
                     else if(temp != pointer) {
-                        currDisp = historyInput[historyInput.length - pointer].value;
-                        currRows = historyInput[historyInput.length - pointer].space;
+                        currDisp = consoles.consoleData.historyInput[consoles.consoleData.historyInput.length
+                                                                                                - pointer].value;
+                        currRows = consoles.consoleData.historyInput[consoles.consoleData.historyInput.length
+                                                                                                - pointer].space;
                     }
 
-                    curr.value = currDisp;
-                    curr.rows = currRows;
+                    consoles.consoleData.curr.value = currDisp;
+                    consoles.consoleData.curr.rows = currRows;
 
             }
         }
@@ -119,11 +96,11 @@ document.addEventListener('keydown', (e) => {
         if(e.key == 'Tab'){
             e.preventDefault();
 
-            let head = curr.value.substring(0, curr.selectionStart);
-            let tail = curr.value.substring(curr.selectionEnd);
+            let head = consoles.consoleData.curr.value.substring(0, consoles.consoleData.curr.selectionStart);
+            let tail = consoles.consoleData.curr.value.substring(consoles.consoleData.curr.selectionEnd);
 
-            curr.value = head + "\t" + tail;
-            curr.selectionStart = curr.selectionEnd = head.length + 1;
+            consoles.consoleData.curr.value = head + "\t" + tail;
+            consoles.consoleData.curr.selectionStart = consoles.consoleData.curr.selectionEnd = head.length + 1;
         }
 
         if(e.key == 'Enter'){
@@ -148,22 +125,22 @@ ipcRenderer.on('interpreter', (_, data) =>{
     else{
         piStr = "No Valid Interpreter Selected";
     }
-    swap.consoleData.infoBox = {text: piStr};
+    consoles.consoleData.infoBox = {text: piStr};
 
     /*settingsSaved and hs are either both undefined or both containing value*/
     if(typeof(data.hs) != 'undefined'){
-        historyInput = data.hs;
+        consoles.consoleData.historyInput = data.hs;
         Object.assign(settings.settingsData, data.settingsSaved);
 
         //Since DOM content will almost certainly be loaded before the Interpreter
         //signal, this can be done.
         swap.consoleLayout();
-        swap.newInputSlot();
+        consoles.newInputSlot();
     }
 
     proceed = interpreter.changeInterpreter(piStr, data.pt);
 
-    if(swap.misc.isConsole){
+    if(utils.misc.isConsole){
         document.getElementById('interpreter-info').innerHTML = piStr;
     }
 });
@@ -175,63 +152,10 @@ ipcRenderer.on('clear', () => {
         table.deleteRow(0);
     }
 
-    swap.consoleData.input = swap.consoleData.output = [];
-    swap.misc.cnt = 0;
-    swap.newInputSlot();
+    consoles.consoleData.input = consoles.consoleData.output = [];
+    utils.misc.cnt = 0;
+    consoles.newInputSlot();
 });
-
-async function evaluation(curr){
-
-    let currStr = (curr.value).split('\n');
-    let i;
-    let totalData = '';
-
-    //Take in input and deal with it one at a time
-    for(i = 0; i < currStr.length - 1; i++){
-        // If continuation block, get the last input in curr.
-        // Otherwise just the current value in curr.
-
-        //Only concerned with single lined input and handling
-        //the stdout associated with it.
-         interpreter.writeInput(currStr[i] + '\n');
-         totalData = (await interpreter.executeInput(settings.settingsData.errorDesc, totalData)).totalData;
-
-    }
-    interpreter.resetInput();
-
-    //Deals with the final result
-    interpreter.writeInput(currStr[i] + '\n');
-
-    let bundle = await interpreter.executeInput(settings.settingsData.errorDesc, totalData);
-    let outType = {msg: bundle.msg, isError: bundle.isError, isWritten: bundle.isWritten};
-    totalData = bundle.totalData;
-
-    if(!outType.isWritten){
-        outType.msg = "YAPR error: Newline expected at end of input command.";
-        outType.isError = true;
-
-        /*Flush out stdin for custom YAPR error*/
-        interpreter.writeInput('dummy\n');
-        totalData = (await interpreter.executeInput(settings.settingsData.errorDesc, totalData)).totalData;
-    }
-
-    swap.newOutputSlot({msg: outType.msg, isError: outType.isError});
-    swap.consoleData.output.push(outType);
-
-    //Replace leading and trailing NEWLINES ONLY.
-    curr.disabled = true;
-
-    newestAddition = {value: curr.value, space: curr.rows};
-    swap.consoleData.input.push(newestAddition);
-
-    if(newestAddition.value.trim() != ''){
-        ipcRenderer.send('history-update', newestAddition);
-        utils.historyUpdate(historyInput, settings.settingsData.historyLimit, newestAddition);
-    }
-
-    totalData = '';
-    swap.newInputSlot();
-}
 
 /** ***********************************************************************
                                 SETTINGS
@@ -240,11 +164,11 @@ async function evaluation(curr){
 
 /*Open settings*/
 ipcRenderer.on('settings', () => {
-    if(swap.misc.isConsole){
+    if(utils.misc.isConsole){
         pointer = 0;
         swap.settingsLayout();
-        swap.misc.cnt = 0;
-        swap.misc.isConsole = false;
+        utils.misc.cnt = 0;
+        utils.misc.isConsole = false;
     }
 });
 

@@ -2,9 +2,7 @@
 here.*/
 
 const settings = require('../Utils/settings.js');
-
-var consoleData = {infoBox: undefined, input: [], output: []};
-var misc = {cnt: 0, isConsole: true};
+const consoles = require('../Utils/console.js');
 
 /*Clear the body*/
 const clearBody = (body) => {
@@ -21,8 +19,8 @@ const consoleLayout = () => {
     intInfo.id = "interpreter-info";
     body.appendChild(intInfo);
 
-    if(consoleData.infoBox !== undefined){
-        intInfo.innerHTML = consoleData.infoBox.text;
+    if(consoles.consoleData.infoBox !== undefined){
+        intInfo.innerHTML = consoles.consoleData.infoBox.text;
     }
 
     let container = document.createElement('DIV');
@@ -33,75 +31,15 @@ const consoleLayout = () => {
     interior.id = "interior";
     container.appendChild(interior)
 
-    for(let i = 0; i < consoleData.input.length; i++){
-        newInputSlot(consoleData.input[i]);
-        newOutputSlot(consoleData.output[i]);
+    for(let i = 0; i < consoles.consoleData.input.length; i++){
+        consoles.newInputSlot(consoles.consoleData.input[i]);
+        consoles.newOutputSlot(consoles.consoleData.output[i]);
     }
 
     intInfo.className = 'console-' + settings.settingsData.font;
     container.className = 'console-' + settings.settingsData.font;
 
     settings.adjustTheme();
-}
-
-/*Renders the next table row with required INPUT cells.
-newInputSlot deals with receiving new input and reloading previous
-input, depending on the paramenters.*/
-const newInputSlot = (inBox = undefined) => {
-
-    let firstElement = '&gt;&gt;&gt;';
-    let table = document.getElementById('interior');
-    let row = table.insertRow(misc.cnt++);
-
-    let cell1 = row.insertCell(0);
-    let cell2 = row.insertCell(1);
-
-    let status = document.createElement('SPAN');
-    status.innerHTML = firstElement;
-    cell1.appendChild(status);
-
-    let input = document.createElement('TEXTAREA');
-    input.autoComplete = "on";
-    cell2.appendChild(input);
-    input.cols = 1;
-
-    if(inBox === undefined){
-        input.rows = 1;
-        input.focus();
-    }
-    else{
-        input.rows = inBox.space;
-        input.value = inBox.value;
-        input.disabled = true;
-    }
-
-    input.classList.remove('black-fore', 'white-fore');
-    settings.settingsData.dark ? input.classList.add('black-fore', 'console-' + settings.settingsData.font) :
-                        input.classList.add('white-fore', 'console-' + settings.settingsData.font);
-}
-
-/*Renders the next table row with required OUTPUT cells.
-newOutputSlot deals with receiving new output and reloading previous
-output, depending on the paramenters.*/
-const newOutputSlot = (outBox) => {
-
-    let table = document.getElementById('interior');
-    let row = table.insertRow(misc.cnt++);
-
-    let cell = row.insertCell(0);
-    cell.colSpan = 2;
-
-    let output = document.createElement('P');
-    let strOut = outBox.msg;
-
-    if(outBox.isError){
-        output.innerHTML = strOut.fontcolor("red");
-    }
-    else{
-        output.innerHTML = settings.settingsData.dark ? strOut.fontcolor("white") : strOut.fontcolor("black");
-    }
-
-    cell.appendChild(output);
 }
 
 /*Create the layout for settings*/
@@ -154,5 +92,5 @@ const settingsLayout = () => {
 }
 
 module.exports = {
-    consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, misc
+    consoleLayout, settingsLayout
 }
