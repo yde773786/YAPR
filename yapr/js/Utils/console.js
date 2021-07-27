@@ -7,7 +7,7 @@ const indent = require('../Manipulation/indent.js');
 const settings = require('./settings.js');
 
 var consoleData = {infoBox: undefined, input: [], output: [], curr: undefined,
-                    historyInput: [], pointToEdit: {'0' : {value: '', space: 1}}};
+                    historyInput: [], pointToEdit: {'0' : {value: '', space: 1}}, pointer: 0};
 
 /*The front end for the execution process of each command through execute
 Excute each line -> Display output -> add to history -> New input slot*/
@@ -73,7 +73,7 @@ const enterPressedListener = (proceed) => {
         }
 
         consoleData.pointToEdit = {'0' : {value: '', space: 1}};
-        pointer = 0;
+        consoleData.pointer = 0;
 
         evaluation();
     }
@@ -84,11 +84,52 @@ const enterPressedListener = (proceed) => {
     }
 };
 
+/*Functionality for when Tab button is pressed.
+Traditional tab in text editor is applied to acive textarea*/
+const tabPressedListener = () => {
+
+    let head = consoleData.curr.value.substring(0, consoleData.curr.selectionStart);
+    let tail = consoleData.curr.value.substring(consoleData.curr.selectionEnd);
+
+    consoleData.curr.value = head + "\t" + tail;
+    consoleData.curr.selectionStart = consoleData.curr.selectionEnd = head.length + 1;
+};
+
+/*Functionality for when Up/Down arrow pressed.
+Use the history stored and index updated by the Up/Down click
+to refresh content in current textarea.*/
+const arrowPressedListener = (isArrowUp) => {
+
+    let currDisp = consoleData.curr.value;
+    let currRows = consoleData.curr.rows;
+    let temp = consoleData.pointer;
+
+    if(isArrowUp && consoleData.pointer != consoleData.historyInput.length){
+        consoleData.pointer++;
+    }
+    else if(!isArrowUp && consoleData.pointer != 0){
+        consoleData.pointer--;
+    }
+
+    if(typeof(consoleData.pointToEdit[consoleData.pointer]) != 'undefined'){
+        currDisp = consoleData.pointToEdit[consoleData.pointer].value;
+        currRows = consoleData.pointToEdit[consoleData.pointer].space;
+    }
+    else if(temp != consoleData.pointer) {
+        currDisp = consoleData.historyInput[consoleData.historyInput.length - consoleData.pointer].value;
+        currRows = consoleData.historyInput[consoleData.historyInput.length - consoleData.pointer].space;
+    }
+
+    consoleData.curr.value = currDisp;
+    consoleData.curr.rows = currRows;
+
+}
+
 /*When any other key is pressed, chabge textarea size and temporary history as
 required dynamically.*/
 const otherPressedListener = () => {
     consoleData.curr.rows = consoleData.curr.value.split('\n').length;
-    consoleData.pointToEdit[pointer] = {value: consoleData.curr.value, space: consoleData.curr.rows};
+    consoleData.pointToEdit[consoleData.pointer] = {value: consoleData.curr.value, space: consoleData.curr.rows};
 };
 
 /*Renders the next table row with required INPUT cells.
@@ -153,4 +194,4 @@ const newOutputSlot = (outBox) => {
 }
 
 module.exports = {consoleData, evaluation, newInputSlot, newOutputSlot, enterPressedListener,
-                    otherPressedListener};
+                    otherPressedListener, tabPressedListener, arrowPressedListener};

@@ -4,7 +4,6 @@ const utils = require('../Utils/miscellaneous.js');
 const settings = require('../Utils/settings.js');
 const consoles = require('../Utils/console.js');
 const interpreter = require('../Utils/interpreter.js')
-var pointer = 0;
 var proceed;
 
 
@@ -62,45 +61,14 @@ document.addEventListener('keydown', (e) => {
             of input block*/
             if((currLine == 1 && e.key == "ArrowUp") || (currLine ==
                 consoles.consoleData.curr.value.split('\n').length && e.key == "ArrowDown")){
-
                     e.preventDefault();
-
-                    let currDisp = consoles.consoleData.curr.value;
-                    let currRows = consoles.consoleData.curr.rows;
-                    let temp = pointer;
-
-                    if(e.key == "ArrowUp" && pointer != consoles.consoleData.historyInput.length){
-                        pointer++;
-                    }
-                    else if(e.key == "ArrowDown" && pointer != 0){
-                        pointer--;
-                    }
-
-                    if(typeof(consoles.consoleData.pointToEdit[pointer]) != 'undefined'){
-                        currDisp = consoles.consoleData.pointToEdit[pointer].value;
-                        currRows = consoles.consoleData.pointToEdit[pointer].space;
-                    }
-                    else if(temp != pointer) {
-                        currDisp = consoles.consoleData.historyInput[consoles.consoleData.historyInput.length
-                                                                                                - pointer].value;
-                        currRows = consoles.consoleData.historyInput[consoles.consoleData.historyInput.length
-                                                                                                - pointer].space;
-                    }
-
-                    consoles.consoleData.curr.value = currDisp;
-                    consoles.consoleData.curr.rows = currRows;
-
+                    consoles.arrowPressedListener(e.key == "ArrowUp");
             }
         }
 
         if(e.key == 'Tab'){
             e.preventDefault();
-
-            let head = consoles.consoleData.curr.value.substring(0, consoles.consoleData.curr.selectionStart);
-            let tail = consoles.consoleData.curr.value.substring(consoles.consoleData.curr.selectionEnd);
-
-            consoles.consoleData.curr.value = head + "\t" + tail;
-            consoles.consoleData.curr.selectionStart = consoles.consoleData.curr.selectionEnd = head.length + 1;
+            consoles.tabPressedListener();
         }
 
         if(e.key == 'Enter'){
@@ -165,7 +133,7 @@ ipcRenderer.on('clear', () => {
 /*Open settings*/
 ipcRenderer.on('settings', () => {
     if(utils.misc.isConsole){
-        pointer = 0;
+        consoles.consoleData.pointer = 0;
         swap.settingsLayout();
         utils.misc.cnt = 0;
         utils.misc.isConsole = false;
