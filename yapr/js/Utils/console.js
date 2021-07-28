@@ -7,9 +7,7 @@ const indent = require('../Manipulation/indent.js');
 const settings = require('./settings.js');
 
 var consoleData = {infoBox: undefined, input: [], output: [], curr: undefined,
-                    historyInput: [], pointer: 0};
-
-var pointToEdit = {'0' : {value: '', space: 1}};
+                    historyInput: [], pointToEdit: {'0' : {value: '', space: 1}}, pointer: 0};
 
 /*The front end for the execution process of each command through execute
 Excute each line -> Display output -> add to history -> New input slot*/
@@ -74,7 +72,7 @@ const enterPressedListener = (proceed) => {
             return;
         }
 
-        pointToEdit = {'0' : {value: '', space: 1}};
+        consoleData.pointToEdit = {'0' : {value: '', space: 1}};
         consoleData.pointer = 0;
 
         evaluation();
@@ -113,9 +111,9 @@ const arrowPressedListener = (isArrowUp) => {
         consoleData.pointer--;
     }
 
-    if(typeof(pointToEdit[consoleData.pointer]) != 'undefined'){
-        currDisp = pointToEdit[consoleData.pointer].value;
-        currRows = pointToEdit[consoleData.pointer].space;
+    if(typeof(consoleData.pointToEdit[consoleData.pointer]) != 'undefined'){
+        currDisp = consoleData.pointToEdit[consoleData.pointer].value;
+        currRows = consoleData.pointToEdit[consoleData.pointer].space;
     }
     else if(temp != consoleData.pointer) {
         currDisp = consoleData.historyInput[consoleData.historyInput.length - consoleData.pointer].value;
@@ -131,7 +129,7 @@ const arrowPressedListener = (isArrowUp) => {
 required dynamically.*/
 const otherPressedListener = () => {
     consoleData.curr.rows = consoleData.curr.value.split('\n').length;
-    pointToEdit[consoleData.pointer] = {value: consoleData.curr.value, space: consoleData.curr.rows};
+    consoleData.pointToEdit[consoleData.pointer] = {value: consoleData.curr.value, space: consoleData.curr.rows};
 };
 
 /*Renders the next table row with required INPUT cells.

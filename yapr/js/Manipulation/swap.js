@@ -1,10 +1,8 @@
 /*Transition from one window to another (within SPA) using methods provided
 here.*/
 
-var settingsData = {historyLimit: '500', dark: false, errorDesc:
-                    true, font: 'medium'};
-var consoleData = {infoBox: undefined, input: [], output: []};
-var cnt = {val: 0};
+const settings = require('../Utils/settings.js');
+const consoles = require('../Utils/console.js');
 
 /*Clear the body*/
 const clearBody = (body) => {
@@ -21,8 +19,8 @@ const consoleLayout = () => {
     intInfo.id = "interpreter-info";
     body.appendChild(intInfo);
 
-    if(consoleData.infoBox !== undefined){
-        intInfo.innerHTML = consoleData.infoBox.text;
+    if(consoles.consoleData.infoBox !== undefined){
+        intInfo.innerHTML = consoles.consoleData.infoBox.text;
     }
 
     let container = document.createElement('DIV');
@@ -33,75 +31,15 @@ const consoleLayout = () => {
     interior.id = "interior";
     container.appendChild(interior)
 
-    for(let i = 0; i < consoleData.input.length; i++){
-        newInputSlot(consoleData.input[i]);
-        newOutputSlot(consoleData.output[i]);
+    for(let i = 0; i < consoles.consoleData.input.length; i++){
+        consoles.newInputSlot(consoles.consoleData.input[i]);
+        consoles.newOutputSlot(consoles.consoleData.output[i]);
     }
 
-    intInfo.className = 'console-' + settingsData.font;
-    container.className = 'console-' + settingsData.font;
+    intInfo.className = 'console-' + settings.settingsData.font;
+    container.className = 'console-' + settings.settingsData.font;
 
-    adjustTheme();
-}
-
-/*Renders the next table row with required INPUT cells.
-newInputSlot deals with receiving new input and reloading previous
-input, depending on the paramenters.*/
-const newInputSlot = (inBox = undefined) => {
-
-    let firstElement = '&gt;&gt;&gt;';
-    let table = document.getElementById('interior');
-    let row = table.insertRow(cnt.val++);
-
-    let cell1 = row.insertCell(0);
-    let cell2 = row.insertCell(1);
-
-    let status = document.createElement('SPAN');
-    status.innerHTML = firstElement;
-    cell1.appendChild(status);
-
-    let input = document.createElement('TEXTAREA');
-    input.autoComplete = "on";
-    cell2.appendChild(input);
-    input.cols = 1;
-
-    if(inBox === undefined){
-        input.rows = 1;
-        input.focus();
-    }
-    else{
-        input.rows = inBox.space;
-        input.value = inBox.value;
-        input.disabled = true;
-    }
-
-    input.classList.remove('black-fore', 'white-fore');
-    settingsData.dark ? input.classList.add('black-fore', 'console-' + settingsData.font) :
-                        input.classList.add('white-fore', 'console-' + settingsData.font);
-}
-
-/*Renders the next table row with required OUTPUT cells.
-newOutputSlot deals with receiving new output and reloading previous
-output, depending on the paramenters.*/
-const newOutputSlot = (outBox) => {
-
-    let table = document.getElementById('interior');
-    let row = table.insertRow(cnt.val++);
-
-    let cell = row.insertCell(0);
-    cell.colSpan = 2;
-
-    let output = document.createElement('P');
-    let strOut = outBox.msg;
-
-    if(outBox.isError){
-        output.innerHTML = strOut.fontcolor("red");
-    }
-    else{
-        output.innerHTML = settingsData.dark ? strOut.fontcolor("white") : strOut.fontcolor("black");
-    }
-
-    cell.appendChild(output);
+    settings.adjustTheme();
 }
 
 /*Create the layout for settings*/
@@ -148,47 +86,11 @@ const settingsLayout = () => {
             </select>\
         </div>';
 
-        adjustTheme();
-        adjustFont();
-        getSettings();
-}
-
-/*Fix the thematic coloring for HTML and settingsLayout*/
-const adjustTheme = () => {
-
-    settingsData.dark ? document.getElementsByTagName('HTML')[0].className = "black-back"
-                       : document.getElementsByTagName('HTML')[0].className = "white-back";
-
-    Array.prototype.slice.call(document.getElementsByTagName('SELECT')).forEach((select) => {
-        select.classList.remove('black-fore', 'white-fore');
-        settingsData.dark ? select.classList.add('black-fore') : select.classList.add('white-fore');
-    });
-
-}
-
-/*Fix the font size for settingsLayout*/
-const adjustFont = () => {
-
-    Array.prototype.slice.call(document.getElementsByClassName('options')).forEach((option) => {
-        option.classList.remove('options-small', 'options-medium', 'options-large');
-        option.classList.add('options-' + settingsData.font);
-    });
-
-    Array.prototype.slice.call(document.getElementsByTagName('h1')).forEach((option) => {
-        option.className = 'h1-' + settingsData.font;
-    });
-
-}
-
-
-const getSettings = () => {
-    document.getElementById('history-limit').value = settingsData.historyLimit;
-    document.getElementById('theme-switch').checked = settingsData.dark;
-    document.getElementById('err-switch').checked = settingsData.errorDesc;
-    document.getElementById('text-font').value = settingsData.font;
+        settings.adjustTheme();
+        settings.adjustFont();
+        settings.getSettings();
 }
 
 module.exports = {
-    consoleLayout, settingsLayout, consoleData, newInputSlot, newOutputSlot, cnt,
-     settingsData, adjustTheme, adjustFont
+    consoleLayout, settingsLayout
 }

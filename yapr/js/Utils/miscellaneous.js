@@ -1,5 +1,7 @@
 /*Used common logic*/
 
+var misc = {cnt: 0, isConsole: true};
+
 /*Update arrays that contain history log of commands*/
 const historyUpdate = (history, limit, newestAddition) => {
     while(history.length > limit){
@@ -15,5 +17,5 @@ const historyUpdate = (history, limit, newestAddition) => {
 };
 
 module.exports = {
-    historyUpdate
+    historyUpdate, misc
 }

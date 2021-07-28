@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const path = require('path');
 
 const fs = require('fs');
-const utils = require('../Utils/utils.js')
+const utils = require('../Utils/miscellaneous.js')
 const exec = require('child_process').exec;
 var pathInterpreter;
 var versionInterpreter;
