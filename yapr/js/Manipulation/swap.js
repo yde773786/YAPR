@@ -31,9 +31,13 @@ const consoleLayout = () => {
     interior.id = "interior";
     container.appendChild(interior)
 
-    for(let i = 0; i < consoles.consoleData.input.length; i++){
-        consoles.newInputSlot(consoles.consoleData.input[i]);
-        consoles.newOutputSlot(consoles.consoleData.output[i]);
+    for(let i = 0; i < consoles.consoleData.slot.length; i++){
+        if(consoles.consoleData.slot[i].type === 'input'){
+            consoles.newInputSlot(consoles.consoleData.slot[i]);
+        }
+        else{
+            consoles.newOutputSlot(consoles.consoleData.slot[i]);
+        }
     }
 
     intInfo.className = 'console-' + settings.settingsData.font;

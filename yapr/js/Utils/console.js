@@ -6,7 +6,7 @@ const {ipcRenderer} = require('electron');
 const indent = require('../Manipulation/indent.js');
 const settings = require('./settings.js');
 
-var consoleData = {infoBox: undefined, input: [], output: [], curr: undefined,
+var consoleData = {infoBox: undefined, slot: [], curr: undefined,
                     historyInput: [], pointer: 0};
 
 var pointToEdit =  {'0' : {value: '', space: 1}};
@@ -36,7 +36,7 @@ async function evaluation(){
     interpreter.writeInput(currStr[i] + '\n');
 
     let bundle = await interpreter.executeInput(settings.settingsData.errorDesc, totalData);
-    let outType = {msg: bundle.msg, isError: bundle.isError, isWritten: bundle.isWritten};
+    let outType = {msg: bundle.msg, isError: bundle.isError, isWritten: bundle.isWritten, type: 'output'};
     totalData = bundle.totalData;
 
     if(!outType.isWritten){
@@ -48,14 +48,14 @@ async function evaluation(){
         totalData = (await interpreter.executeInput(settings.settingsData.errorDesc, totalData)).totalData;
     }
 
-    newOutputSlot({msg: outType.msg, isError: outType.isError});
-    consoleData.output.push(outType);
-
     //Replace leading and trailing NEWLINES ONLY.
     consoleData.curr.disabled = true;
 
-    let newestAddition = {value: consoleData.curr.value, space: consoleData.curr.rows};
-    consoleData.input.push(newestAddition);
+    let newestAddition = {value: consoleData.curr.value, space: consoleData.curr.rows, type: 'input'};
+    consoleData.slot.push(newestAddition);
+
+    newOutputSlot({msg: outType.msg, isError: outType.isError});
+    consoleData.slot.push(outType);
 
     if(newestAddition.value.trim() != ''){
         ipcRenderer.send('history-update', newestAddition);

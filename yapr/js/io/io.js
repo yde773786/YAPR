@@ -120,7 +120,7 @@ ipcRenderer.on('clear', () => {
         table.deleteRow(0);
     }
 
-    consoles.consoleData.input = consoles.consoleData.output = [];
+    consoles.consoleData.slot = [];
     utils.misc.cnt = 0;
     consoles.newInputSlot();
 });
