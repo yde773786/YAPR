@@ -43,6 +43,12 @@ body{
     overflow: hidden;
 }
 
+.paused {
+    outline: none;
+    border:1px solid yellow;
+    box-shadow: 0 0 10px #719ECE;
+}
+
 *:focus {
     outline: none;
     border:1px solid green;

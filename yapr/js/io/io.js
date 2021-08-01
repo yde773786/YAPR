@@ -4,6 +4,7 @@ const utils = require('../Utils/miscellaneous.js');
 const settings = require('../Utils/settings.js');
 const consoles = require('../Utils/console.js');
 const interpreter = require('../Utils/interpreter.js')
+const menu = require('../Utils/menu.js');
 var proceed;
 
 
@@ -27,7 +28,10 @@ execution. */
 window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     if(e.target == consoles.consoleData.curr){
-        ipcRenderer.send("Menu", true);
+        menu.pauseListener();
+    }
+    else if(e.target.classList.contains('paused')){
+        menu.resumeListener();
     }
 });
 
