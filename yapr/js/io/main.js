@@ -139,7 +139,7 @@ ipcMain.on('Menu', (_, isPaused) => {
         {
           label: isPaused ? 'Pause Execution' : 'Resume Execution',
           click: () => {
-            console.log("Menu Clicked");
+            win.webContents.send('menu-click');
           }
         }
   ];

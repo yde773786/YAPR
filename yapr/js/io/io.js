@@ -6,6 +6,7 @@ const consoles = require('../Utils/console.js');
 const interpreter = require('../Utils/interpreter.js')
 const menu = require('../Utils/menu.js');
 var proceed;
+var contextTarget;
 
 
 /** ***********************************************************************
@@ -28,10 +29,22 @@ execution. */
 window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     if(e.target == consoles.consoleData.curr){
-        menu.pauseListener();
+        ipcRenderer.send("Menu", true);
     }
     else if(e.target.classList.contains('paused')){
-        menu.resumeListener();
+        ipcRenderer.send("Menu", false);
+    }
+
+    contextTarget = e.target;
+});
+
+/*receive selection of pause/resume */
+ipcRenderer.on('menu-click', () => {
+    if(contextTarget == consoles.consoleData.curr){
+        menu.pauseListener();
+    }
+    else if(contextTarget.classList.contains('paused')){
+        menu.resumeListener(contextTarget);
     }
 });
 

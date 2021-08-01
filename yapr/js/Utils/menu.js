@@ -1,15 +1,15 @@
 /*Manages functionality of context menu*/
 
-const {ipcRenderer} = require('electron');
+const consoles = require('../Utils/console.js');
 
 /*Functionality for when input is paused*/
 const pauseListener = () => {
-    ipcRenderer.send("Menu", true);
+    consoles.consoleData.curr.classList.add("paused");
 }
 
 /*Functionality for when input is resumed*/
-const resumeListener = () => {
-    ipcRenderer.send("Menu", false);
+const resumeListener = (toResume) => {
+    toResume.classList.remove("paused");
 }
 
 module.exports = {pauseListener, resumeListener}
