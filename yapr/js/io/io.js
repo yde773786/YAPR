@@ -123,7 +123,11 @@ ipcRenderer.on('interpreter', (_, data) =>{
         consoles.newInputSlot();
     }
 
-    proceed = interpreter.changeInterpreter(piStr, data.pt);
+    interpreter.changeInterpreter(piStr, data.pt).then(
+        (result) => {
+            proceed = result;
+        }
+    );
 
     if(utils.misc.isConsole){
         document.getElementById('interpreter-info').innerHTML = piStr;
