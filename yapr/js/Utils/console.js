@@ -51,7 +51,7 @@ async function evaluation(){
     //Replace leading and trailing NEWLINES ONLY.
     consoleData.curr.disabled = true;
 
-    let newestAddition = {value: consoleData.curr.value, space: consoleData.curr.rows, type: 'input'};
+    let newestAddition = {value: consoleData.curr.value, space: consoleData.curr.rows, type: 'input', paused: false};
     consoleData.slot.push(newestAddition);
 
     newOutputSlot({msg: outType.msg, isError: outType.isError});
@@ -163,6 +163,10 @@ const newInputSlot = (inBox = undefined) => {
         input.rows = inBox.space;
         input.value = inBox.value;
         input.disabled = true;
+
+        if(inBox.paused){
+            input.classList.add('paused');
+        }
     }
     consoleData.curr = input;
 
