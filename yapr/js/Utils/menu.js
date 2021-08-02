@@ -18,7 +18,7 @@ const resumeListener = (toResume) => {
     for(let i = 0; i < consoles.consoleData.slot.length; i++){
         if(consoles.consoleData.slot[i].type === 'input'){
             inputIndex--;
-            if(inputIndex == 0){
+            if(inputIndex == -1){
                 consoles.consoleData.slot[i].paused = false;
                 break;
             }
