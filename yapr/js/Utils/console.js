@@ -16,37 +16,7 @@ Excute each line -> Display output -> add to history -> New input slot*/
 async function evaluation(){
 
     let currStr = (consoleData.curr.value).split('\n');
-    let i;
-    let totalData = '';
-
-    //Take in input and deal with it one at a time
-    for(i = 0; i < currStr.length - 1; i++){
-        // If continuation block, get the last input in consoleData.curr.
-        // Otherwise just the current value in consoleData.curr.
-
-        //Only concerned with single lined input and handling
-        //the stdout associated with it.
-         interpreter.writeInput(currStr[i] + '\n');
-         totalData = (await interpreter.executeInput(settings.settingsData.errorDesc, totalData)).totalData;
-
-    }
-    interpreter.resetInput();
-
-    //Deals with the final result
-    interpreter.writeInput(currStr[i] + '\n');
-
-    let bundle = await interpreter.executeInput(settings.settingsData.errorDesc, totalData);
-    let outType = {msg: bundle.msg, isError: bundle.isError, isWritten: bundle.isWritten, type: 'output'};
-    totalData = bundle.totalData;
-
-    if(!outType.isWritten){
-        outType.msg = "YAPR error: Newline expected at end of input command.";
-        outType.isError = true;
-
-        /*Flush out stdin for custom YAPR error*/
-        interpreter.writeInput('dummy\n');
-        totalData = (await interpreter.executeInput(settings.settingsData.errorDesc, totalData)).totalData;
-    }
+    outType = await interpreter.outputResult(currStr, settings.settingsData.errorDesc)
 
     //Replace leading and trailing NEWLINES ONLY.
     consoleData.curr.disabled = true;
@@ -62,7 +32,6 @@ async function evaluation(){
         utils.historyUpdate(consoleData.historyInput, settings.settingsData.historyLimit, newestAddition);
     }
 
-    totalData = '';
     newInputSlot();
 }
 

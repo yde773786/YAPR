@@ -115,6 +115,42 @@ const executeInput = (isErrorDesc, totalData) => {
     });
 };
 
+/*Provides an object that conatins all required details to create an
+output text area for the multi-line input (inputstr) being provided*/
+const outputResult = async (inputStr, isErrorDesc) => {
+    let totalData = '';
+    let i;
+
+    //Take in input and deal with it one at a time
+    for(i = 0; i < inputStr.length - 1; i++){
+        // If continuation block, get the last input in consoleData.curr.
+        // Otherwise just the current value in consoleData.curr.
+
+        //Only concerned with single lined input and handling
+        //the stdout associated with it.
+         writeInput(inputStr[i] + '\n');
+         totalData = (await executeInput(isErrorDesc, totalData)).totalData;
+
+    }
+    resetInput();
+
+    //Deals with the final result
+    writeInput(inputStr[i] + '\n');
+
+    let bundle = await executeInput(isErrorDesc, totalData);
+    let outType = {msg: bundle.msg, isError: bundle.isError, isWritten: bundle.isWritten, type: 'output'};
+
+    if(!outType.isWritten){
+        outType.msg = "YAPR error: Newline expected at end of input command.";
+        outType.isError = true;
+
+        /*Flush out stdin for custom YAPR error*/
+        writeInput('dummy\n');
+    }
+
+    return Promise.resolve(outType);
+};
+
 /*Writes input into the python interpreter.*/
 const writeInput = (string) => {
     py.stdin.write(string);
@@ -125,4 +161,4 @@ const resetInput = () => {
     py.stdout.removeAllListeners(['data']);
 }
 
-module.exports = {changeInterpreter, executeInput, writeInput, resetInput}
+module.exports = {changeInterpreter, executeInput, writeInput, resetInput, outputResult}
