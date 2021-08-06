@@ -1,6 +1,8 @@
 /*Manages functionality of context menu*/
 
-const consoles = require('../Utils/console.js');
+const consoles = require('./console.js');
+const interpreter = require('./interpreter.js')
+const settings = require('./settings.js');
 
 /*Functionality for when input is paused*/
 const pauseListener = () => {
@@ -11,7 +13,7 @@ const pauseListener = () => {
 }
 
 /*Functionality for when input is resumed*/
-const resumeListener = (toResume) => {
+const resumeListener = async (toResume) => {
     toResume.classList.remove("paused");
     let inputIndex = Array.prototype.slice.call(document.getElementsByTagName("textarea")).indexOf(toResume);
 
@@ -19,7 +21,12 @@ const resumeListener = (toResume) => {
         if(consoles.consoleData.slot[i].type === 'input'){
             inputIndex--;
             if(inputIndex == -1){
-                consoles.consoleData.slot[i].paused = false;
+                currSlot = consoles.consoleData.slot[i];
+                currSlot.paused = false;
+                let currStr = (currSlot.value).split('\n');
+
+                outType = await interpreter.outputResult(currStr, settings.settingsData.errorDesc);
+                consoles.newOutputSlot({msg: outType.msg, isError: outType.isError});
                 break;
             }
         }
