@@ -7,6 +7,7 @@ const settings = require('./settings.js');
 /*Functionality for when input is paused*/
 const pauseListener = () => {
     consoles.consoleData.curr.classList.add("paused");
+    consoles.consoleData.curr.disabled = true;
     consoles.consoleData.slot.push({value: consoles.consoleData.curr.value,
         space: consoles.consoleData.curr.rows, type: 'input', paused: true});
     consoles.newInputSlot();
