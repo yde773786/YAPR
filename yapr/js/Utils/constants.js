@@ -6,7 +6,7 @@ var errors = {
 
 const paths = {
     windows: '/scripts/pystderr.bat',
-    linux: '../../../../scripts/pystderr.sh'
+    linux: '/scripts/pystderr.sh'
 }
 
 module.exports = {
