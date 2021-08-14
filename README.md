@@ -11,7 +11,6 @@
 <hr>
 
 ## Features
-https://user-images.githubusercontent.com/63968183/124460439-6f7e8300-dda0-11eb-85dd-4492ddc5bdca.mp4
 
 * Functionality of standard Python Consoles
 * Cuztomization of appearence, error description and history logs
