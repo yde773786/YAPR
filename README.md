@@ -11,16 +11,16 @@
 <hr>
 
 ## Features
-https://user-images.githubusercontent.com/63968183/124460439-6f7e8300-dda0-11eb-85dd-4492ddc5bdca.mp4
 
 * Functionality of standard Python Consoles
-* Cuztomization
+* Cuztomization of appearence, error description and history logs
 * Error filtering
 * Automatic indentation
 * Enlarging textarea for block-level scripting
+* Pause command till another block is executed (Pause/Resume execution)
 
 ## Releases
- Pre-release Version 0.1.1 is available. Near future versions will concern:
+ Pre-release Version 0.2.0 is available. Near future versions will concern:
 
 Issues: https://github.com/yde773786/YAPR/issues <br>
 Projects: https://github.com/yde773786/YAPR/projects
