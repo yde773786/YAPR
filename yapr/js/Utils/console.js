@@ -5,9 +5,12 @@ const interpreter = require('../Utils/interpreter.js')
 const {ipcRenderer} = require('electron');
 const indent = require('../Manipulation/indent.js');
 const settings = require('./settings.js');
+const Prism = require('prismjs');
+const loadLanguages = require('prismjs/components/');
+loadLanguages(['python']);
 
 var consoleData = {infoBox: undefined, slot: [], curr: undefined,
-                    historyInput: [], pointer: 0};
+                    historyInput: [], pointer: 0, code: undefined};
 
 var pointToEdit =  {'0' : {value: '', space: 1}};
 
@@ -53,6 +56,7 @@ const enterPressedListener = (proceed) => {
         //Replace leading and trailing NEWLINES ONLY.
         consoleData.curr.rows = 1;
     }
+    highlight();
 };
 
 /*Functionality for when Tab button is pressed.
@@ -64,6 +68,7 @@ const tabPressedListener = () => {
 
     consoleData.curr.value = head + "\t" + tail;
     consoleData.curr.selectionStart = consoleData.curr.selectionEnd = head.length + 1;
+    highlight();
 };
 
 /*Functionality for when Up/Down arrow pressed.
@@ -93,14 +98,21 @@ const arrowPressedListener = (isArrowUp) => {
 
     consoleData.curr.value = currDisp;
     consoleData.curr.rows = currRows;
-
+    highlight();
 }
+
+const highlight = () => {
+    consoleData.code.innerHTML = "";
+    consoleData.code.textContent = consoleData.curr.value;
+    Prism.highlightElement(consoleData.code);
+};
 
 /*When any other key is pressed, chabge textarea size and temporary history as
 required dynamically.*/
 const otherPressedListener = () => {
     consoleData.curr.rows = consoleData.curr.value.split('\n').length;
     pointToEdit[consoleData.pointer] = {value: consoleData.curr.value, space: consoleData.curr.rows};
+    highlight();
 };
 
 /*Renders the next table row with required INPUT cells.
@@ -121,7 +133,6 @@ const newInputSlot = (inBox = undefined) => {
 
     let input = document.createElement('TEXTAREA');
     input.autoComplete = "on";
-    cell2.appendChild(input);
     input.cols = 1;
 
     if(inBox === undefined){
@@ -142,6 +153,11 @@ const newInputSlot = (inBox = undefined) => {
     input.classList.remove('black-fore', 'white-fore');
     settings.settingsData.dark ? input.classList.add('black-fore', 'console-' + settings.settingsData.font) :
                         input.classList.add('white-fore', 'console-' + settings.settingsData.font);
+
+    consoleData.code = document.createElement('CODE');
+    consoleData.code.className = "language-python";
+    cell2.appendChild(consoleData.code);
+    cell2.appendChild(input);
 }
 
 /*Renders the next table row with required OUTPUT cells.

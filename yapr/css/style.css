@@ -35,12 +35,36 @@ body{
     white-space: pre-wrap;
 }
 
+#interior tr td{
+    position: relative;
+}
+
 #interior tr td textarea{
     padding: 1%;
     margin-left: 1%;
     -webkit-border-radius: 15px;
-    width: 100%;
     overflow: hidden;
+    position: absolute;
+    color: transparent;
+    background: transparent;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    caret-color: white;
+}
+
+#interior tr td code{
+    padding: 1%;
+    margin-left: 1%;
+    -webkit-border-radius: 15px;
+    overflow: hidden;
+    display: block;
+    white-space: pre-wrap;
+    position: absolute;
+    top: 0;
+    z-index: 0;
+    min-width: 98%;
 }
 
 *:focus {
