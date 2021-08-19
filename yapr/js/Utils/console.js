@@ -43,6 +43,7 @@ If can process, proceed to evaluate. Else, display a warning.*/
 const enterPressedListener = (proceed) => {
     if(proceed){
         if(indent.nextLine(consoleData.curr)){
+            highlight();
             return;
         }
 
@@ -56,7 +57,6 @@ const enterPressedListener = (proceed) => {
         //Replace leading and trailing NEWLINES ONLY.
         consoleData.curr.rows = 1;
     }
-    highlight();
 };
 
 /*Functionality for when Tab button is pressed.
@@ -104,6 +104,11 @@ const arrowPressedListener = (isArrowUp) => {
 const highlight = () => {
     consoleData.code.innerHTML = "";
     consoleData.code.textContent = consoleData.curr.value;
+
+    if(consoleData.curr.value[consoleData.curr.value.length - 1] == "\n"){
+        consoleData.code.textContent += " ";
+    }
+
     Prism.highlightElement(consoleData.code);
 };
 
@@ -156,8 +161,15 @@ const newInputSlot = (inBox = undefined) => {
 
     consoleData.code = document.createElement('CODE');
     consoleData.code.className = "language-python";
-    cell2.appendChild(consoleData.code);
-    cell2.appendChild(input);
+
+    consoleData.code.editable = false;
+
+    let codeBlock = document.createElement('DIV');
+    codeBlock.id = "code-container";
+
+    codeBlock.appendChild(input);
+    codeBlock.appendChild(consoleData.code);
+    cell2.appendChild(codeBlock);
 }
 
 /*Renders the next table row with required OUTPUT cells.

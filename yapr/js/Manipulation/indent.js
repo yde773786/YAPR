@@ -1,5 +1,6 @@
 /*Manipulation of textarea with respect to indentation*/
 
+/*Checks if the current block is still preserved after addition of newline*/
 const nextLine = (curr) => {
     let selectStr = curr.value.substr(0, curr.selectionStart).split('\n');
     let currIndex = selectStr.length - 1;

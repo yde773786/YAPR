@@ -36,32 +36,35 @@ body{
 }
 
 #interior tr td{
+    height: auto;
+}
+
+#code-container{
     position: relative;
 }
 
-#interior tr td textarea{
+#code-container textarea{
     padding: 1%;
     margin-left: 1%;
     -webkit-border-radius: 15px;
     overflow: hidden;
-    position: absolute;
     color: transparent;
     background: transparent;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
     caret-color: white;
+    z-index: 1;
+    min-width: 98%;
+    top: 0;
+    position: absolute;
 }
 
-#interior tr td code{
+#code-container code{
     padding: 1%;
     margin-left: 1%;
     -webkit-border-radius: 15px;
     overflow: hidden;
     display: block;
     white-space: pre-wrap;
-    position: absolute;
+    position: relative;
     top: 0;
     z-index: 0;
     min-width: 98%;

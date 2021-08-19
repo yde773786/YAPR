@@ -28,10 +28,11 @@ ipcRenderer.on('console', () => {
 execution. */
 window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-    if(e.target == consoles.consoleData.curr){
+    console.log(e.target)
+    if(e.target == consoles.consoleData.curr || e.target.parentElement == consoles.consoleData.code){
         ipcRenderer.send("Menu", true);
     }
-    else if(e.target.classList.contains('paused')){
+    else if(e.target.classList.contains('paused') ||  e.target.nextSibling.classList.contains('paused')){
         ipcRenderer.send("Menu", false);
     }
 
