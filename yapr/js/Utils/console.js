@@ -139,6 +139,7 @@ const newInputSlot = (inBox = undefined) => {
     let input = document.createElement('TEXTAREA');
     input.autoComplete = "on";
     input.cols = 1;
+    input.spellcheck = false;
 
     consoleData.curr = input;
 
