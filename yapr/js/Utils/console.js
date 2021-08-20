@@ -140,19 +140,6 @@ const newInputSlot = (inBox = undefined) => {
     input.autoComplete = "on";
     input.cols = 1;
 
-    if(inBox === undefined){
-        input.rows = 1;
-        input.focus();
-    }
-    else{
-        input.rows = inBox.space;
-        input.value = inBox.value;
-        input.disabled = true;
-
-        if(inBox.paused){
-            input.classList.add('paused');
-        }
-    }
     consoleData.curr = input;
 
     input.classList.remove('black-fore', 'white-fore');
@@ -170,6 +157,20 @@ const newInputSlot = (inBox = undefined) => {
     codeBlock.appendChild(input);
     codeBlock.appendChild(consoleData.code);
     cell2.appendChild(codeBlock);
+
+    if(inBox === undefined){
+        input.rows = 1;
+        input.focus();
+    }
+    else{
+        input.rows = inBox.space;
+        input.value = inBox.value;
+        input.disabled = true;
+
+        if(inBox.paused){
+            input.classList.add('paused');
+        }
+    }
 }
 
 /*Renders the next table row with required OUTPUT cells.
